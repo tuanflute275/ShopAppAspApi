@@ -5,6 +5,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("AllowOrigin", p =>
+    {
+        p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 builder.Services.AddDbContext<ApplicationDbContext>(
         options =>
             options.UseSqlServer(
@@ -30,7 +38,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
 
+app.UseCors(
+        options => options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin()
+    );
+//app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

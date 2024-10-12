@@ -3,8 +3,8 @@
     public class ProductModel
     {
         public string ProductName { get; set; }
-        public string ProductSlug { get; set; }
-        public string ProductImage { get; set; }
+        public IFormFile ImageFile { get; set; }
+        public string? OldImage { get; set; }
         public double ProductPrice { get; set; }
         public double ProductSalePrice { get; set; }
         public bool ProductStatus { get; set; }

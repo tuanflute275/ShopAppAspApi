@@ -15,9 +15,11 @@ namespace ShopApp.Controllers
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public ProductController(ApplicationDbContext context)
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _environment;
+        public ProductController(ApplicationDbContext context, Microsoft.AspNetCore.Hosting.IHostingEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -156,11 +158,103 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", productDTO));
         }
 
+        [HttpGet("category/{slug}")]
+        public async Task<ActionResult<Product>> FindByCategory(string slug)
+        {
+            var products = await _context.Products.Include(p => p.Category).Where(p => p.Category.CategorySlug == slug).ToListAsync();
+            var productDTOs = products.Select(p => new ProductDTO
+            {
+                ProductId = p.ProductId,
+                ProductImage = p.ProductImage,
+                ProductName = p.ProductName,
+                ProductSlug = p.ProductSlug,
+                ProductPrice = p.ProductPrice,
+                ProductSalePrice = p.ProductSalePrice,
+                ProductStatus = p.ProductStatus,
+                ProductDescription = p.ProductDescription,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.CategoryName,
+                CategorySlug = p.Category.CategorySlug
+            }).ToList();
+            return Ok(new ResponseObject(200, "Query data successfully", productDTOs));
+        }
+
+        [HttpGet("new")]
+        public async Task<ActionResult<Product>> FindAllDataNew()
+        {
+            var products = await _context.Products.Include(p => p.Category)
+                .OrderByDescending(p => p.ProductId)
+                .ToListAsync();
+            var productDTOs = products.Select(p => new ProductDTO
+            {
+                ProductId = p.ProductId,
+                ProductImage = p.ProductImage,
+                ProductName = p.ProductName,
+                ProductSlug = p.ProductSlug,
+                ProductPrice = p.ProductPrice,
+                ProductSalePrice = p.ProductSalePrice,
+                ProductStatus = p.ProductStatus,
+                ProductDescription = p.ProductDescription,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.CategoryName,
+                CategorySlug = p.Category.CategorySlug
+            }).ToList();
+            return Ok(new ResponseObject(200, "Query data successfully", productDTOs));
+        }
+
+
+        [HttpGet("sale")]
+        public async Task<ActionResult<Product>> FindAllDataSale()
+        {
+            var products = await _context.Products.Include(p => p.Category)
+                .Where(p => p.ProductSalePrice > 0)
+                .ToListAsync();
+            var productDTOs = products.Select(p => new ProductDTO
+            {
+                ProductId = p.ProductId,
+                ProductImage = p.ProductImage,
+                ProductName = p.ProductName,
+                ProductSlug = p.ProductSlug,
+                ProductPrice = p.ProductPrice,
+                ProductSalePrice = p.ProductSalePrice,
+                ProductStatus = p.ProductStatus,
+                ProductDescription = p.ProductDescription,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.CategoryName,
+                CategorySlug = p.Category.CategorySlug
+            }).ToList();
+            return Ok(new ResponseObject(200, "Query data successfully", productDTOs));
+        }
+
+        [HttpGet("related/{slug}")]
+        public async Task<ActionResult<Product>> FindAllDataRelated(string slug)
+        {
+            var products = await _context.Products.Include(p => p.Category)
+                .Where(p => p.ProductSlug != slug)
+                .ToListAsync();
+            var productDTOs = products.Select(p => new ProductDTO
+            {
+                ProductId = p.ProductId,
+                ProductImage = p.ProductImage,
+                ProductName = p.ProductName,
+                ProductSlug = p.ProductSlug,
+                ProductPrice = p.ProductPrice,
+                ProductSalePrice = p.ProductSalePrice,
+                ProductStatus = p.ProductStatus,
+                ProductDescription = p.ProductDescription,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.CategoryName,
+                CategorySlug = p.Category.CategorySlug
+            }).ToList();
+            return Ok(new ResponseObject(200, "Query data successfully", productDTOs));
+        }
+
         [HttpPost]
-        public async Task<ActionResult<Product>> Save(ProductModel model)
+        public async Task<ActionResult<Product>> Save([FromForm] ProductModel model)
         {
             try
             {
+                Product product = new Product();
                 List<Product> foundData = await _context.Products.Where(x => x.ProductName == model.ProductName).ToListAsync();
                 if (foundData.Count > 0)
                 {
@@ -168,17 +262,41 @@ namespace ShopApp.Controllers
                 }
                 else
                 {
-                    Product product = new Product
+                    if (model.ImageFile == null)
                     {
-                        ProductName = model.ProductName,
-                        ProductSlug = Util.GenerateSlug(model.ProductName),
-                        ProductImage = model.ProductImage,
-                        ProductPrice = model.ProductPrice,
-                        ProductSalePrice = model.ProductSalePrice,
-                        ProductStatus = model.ProductStatus,
-                        CategoryId = model.CategoryId,
-                        ProductDescription = model.ProductDescription,
-                    };
+                        return BadRequest(new ResponseObject(400, "Image Is Required", null));
+                    }
+
+                    if (model.ImageFile.Length > 0)
+                    {
+                        // Đường dẫn lưu file
+                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "products");
+                        var filePath = Path.Combine(uploadsFolder, model.ImageFile.FileName);
+
+                        // Tạo thư mục nếu chưa tồn tại
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+
+                        // Lưu file hình ảnh
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await model.ImageFile.CopyToAsync(fileStream);
+                        }
+
+                        // Cập nhật đường dẫn hình ảnh vào thuộc tính sản phẩm
+                        product.ProductImage = $"http://{HttpContext.Request.Host.Value}/uploads/products/{model.ImageFile.FileName}";
+                    }
+
+
+                    product.ProductName = model.ProductName;
+                    product.ProductSlug = Util.GenerateSlug(model.ProductName);
+                    product.ProductPrice = model.ProductPrice;
+                    product.ProductSalePrice = model.ProductSalePrice;
+                    product.ProductStatus = model.ProductStatus;
+                    product.CategoryId = model.CategoryId;
+                    product.ProductDescription = model.ProductDescription;
                     await _context.Products.AddAsync(product);
                     _context.SaveChanges();
                     return Ok(new ResponseObject(200, "Insert data successfully", product));
@@ -191,16 +309,45 @@ namespace ShopApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Product>> Update(int id, ProductModel model)
+        public async Task<ActionResult<Product>> Update(int id, [FromForm] ProductModel model)
         {
             var product = await _context.Products.FindAsync(id);
             if (product != null)
             {
                 try
                 {
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        // Đường dẫn lưu hình ảnh mới
+                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "products");
+                        var newFilePath = Path.Combine(uploadsFolder, model.ImageFile.FileName);
+
+                        // Xóa hình ảnh cũ nếu tồn tại
+                        if (!string.IsNullOrEmpty(model.OldImage))
+                        {
+                            var oldFileName = model.OldImage.Split($"{HttpContext.Request.Host.Value}/uploads/products/").LastOrDefault();
+                            var oldFilePath = Path.Combine(uploadsFolder, oldFileName);
+                            if (System.IO.File.Exists(oldFilePath))
+                            {
+                                System.IO.File.Delete(oldFilePath);
+                            }
+                        }
+
+                        // Lưu file hình ảnh mới
+                        using (var fileStream = new FileStream(newFilePath, FileMode.Create))
+                        {
+                            await model.ImageFile.CopyToAsync(fileStream);
+                        }
+
+                        product.ProductImage = $"http://{HttpContext.Request.Host.Value}/uploads/products/{model.ImageFile.FileName}";
+                    }
+                    else
+                    {
+                        // Nếu không có hình ảnh mới, giữ nguyên hình ảnh cũ
+                        product.ProductImage = model.OldImage;
+                    }
                     product.ProductName = model.ProductName;
                     product.ProductSlug = Util.GenerateSlug(model.ProductName);
-                    product.ProductImage = model.ProductImage;
                     product.ProductPrice = model.ProductPrice;
                     product.ProductSalePrice = model.ProductSalePrice;
                     product.ProductStatus = model.ProductStatus;
