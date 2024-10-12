@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ShopApp.Models.Entities
 {
@@ -20,6 +21,7 @@ namespace ShopApp.Models.Entities
         [Column]
         public bool CategoryStatus { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Product> Products { get; set; }
     }
 }

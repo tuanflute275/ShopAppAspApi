@@ -24,7 +24,7 @@ namespace ShopApp.Controllers
             var categories = await _context.Categories.ToListAsync();
             if (!string.IsNullOrEmpty(name))
             {
-                categories = _context.Categories.Where(x => x.CategoryName.Contains(name)).ToList();
+                categories = await _context.Categories.Where(x => x.CategoryName.Contains(name)).ToListAsync();
             }
             if (!string.IsNullOrEmpty(sort))
             {
@@ -71,7 +71,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", pageData));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Category>> FindById(int id)
         {
             var category = await _context.Categories.FindAsync(id);
@@ -113,7 +113,7 @@ namespace ShopApp.Controllers
                     };
                     await _context.Categories.AddAsync(category);
                     _context.SaveChanges();
-                    return Ok(new ResponseObject(200, "Insert data successfully", model));
+                    return Ok(new ResponseObject(200, "Insert data successfully", category));
                 }
             }
             catch (Exception ex)
@@ -125,25 +125,25 @@ namespace ShopApp.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Category>> Update(int id, CategoryModel model)
         {
-            var cate = await _context.Categories.FindAsync(id);
-            if (cate != null)
+            var category = await _context.Categories.FindAsync(id);
+            if (category != null)
             {
                 try
                 {
-                    cate.CategoryName = model.CategoryName;
-                    cate.CategoryStatus = model.CategoryStatus;
-                    cate.CategorySlug = Util.GenerateSlug(model.CategoryName);
+                    category.CategoryName = model.CategoryName;
+                    category.CategoryStatus = model.CategoryStatus;
+                    category.CategorySlug = Util.GenerateSlug(model.CategoryName);
                     _context.SaveChanges();
-                    return Ok(new ResponseObject(200, "Update data successfully", model));
+                    return Ok(new ResponseObject(200, "Update data successfully", category));
                 }
                 catch (Exception ex) 
                 {
-                    return BadRequest(new ResponseObject(404, "Insert data failed"));
+                    return BadRequest(new ResponseObject(404, "Update data failed"));
                 }
             }
             else
             {
-                return NotFound();
+                return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
             }
         }
 
@@ -163,7 +163,7 @@ namespace ShopApp.Controllers
             }
             catch (Exception ex) 
             {
-                return BadRequest(new ResponseObject(404, "Insert data failed"));
+                return BadRequest(new ResponseObject(404, "Delete data failed"));
             }
         }
     }
