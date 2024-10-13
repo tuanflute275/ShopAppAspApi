@@ -48,24 +48,43 @@ namespace ShopApp.Controllers
                     return BadRequest(new ResponseObject(400, "Incorrect password."));
                 }
 
-                // Tạo token JWT
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("tuanflute275aspwebapishopapp0000");
-                var tokenDescriptor = new SecurityTokenDescriptor
+                //select user role get roleName
+                var userWithRole = await (from ur in _context.UserRoles
+                                          join u in _context.Users on ur.UserId equals u.Id
+                                          join r in _context.Roles on ur.RoleId equals r.Id
+                                          where ur.UserId == 2
+                                          select new
+                                          {
+                                              UserId = u.Id,
+                                              UserEmail = u.UserEmail,
+                                              RoleName = r.RoleName
+                                          }).FirstOrDefaultAsync();
+                if (userWithRole != null)
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
+                    // Tạo token JWT
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.ASCII.GetBytes("tuanflute275aspwebapishopapp0000");
+                    var tokenDescriptor = new SecurityTokenDescriptor
                     {
+                        Subject = new ClaimsIdentity(new Claim[]
+                        {
                         new Claim(ClaimTypes.NameIdentifier, checkUser.Id.ToString()),
                         new Claim(ClaimTypes.Email, checkUser.UserEmail),
-                       
-                    }),
-                    Expires = DateTime.UtcNow.AddHours(1), 
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
+                        new Claim(ClaimTypes.Role, userWithRole.RoleName)
 
-                return Ok(new ResponseObject(200, "Login successfully.", new { Token = tokenString }));
+                        }),
+                        Expires = DateTime.UtcNow.AddHours(1),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    var tokenString = tokenHandler.WriteToken(token);
+
+                    return Ok(new ResponseObject(200, "Login successfully.", new { Token = tokenString }));
+                }
+                else
+                {
+                    return Ok(new ResponseObject(200, "Login failed."));
+                }
             }
             catch (Exception ex)
             {
@@ -98,7 +117,22 @@ namespace ShopApp.Controllers
                                 UserPassword = passwordHash
                             };
                             await _context.Users.AddAsync(user);
-                            _context.SaveChanges();
+                            await _context.SaveChangesAsync();
+                            // lấy userId vừa tạo
+                            var userId = user.Id;
+                            var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == dto.Role);
+                            if (role != null)
+                            {
+                                var userRole = new UserRole
+                                {
+                                    UserId = userId,
+                                    RoleId = role.Id
+                                };
+
+                                _context.UserRoles.Add(userRole);
+                                await _context.SaveChangesAsync();
+                            }
+
                             return Ok(new ResponseObject(200, "Register successfully", null));
                         }
                         else

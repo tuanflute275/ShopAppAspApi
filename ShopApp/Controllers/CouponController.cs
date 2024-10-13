@@ -23,10 +23,6 @@ namespace ShopApp.Controllers
         [HttpGet]
         public async Task<ActionResult<Coupon>> FindAll(string? code, string? sort, int page = 1)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Unauthorized(new ResponseObject(401, "Unauthorized. Please ensure you have a valid token.")); // Trả về mã 401
-            }
             var coupons = await _context.Coupons.Include(x => x.CouponConditions).ToListAsync();
             if (!string.IsNullOrEmpty(code))
             {

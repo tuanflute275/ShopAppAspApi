@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ShopApp.Data;
+using ShopApp.Utils;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,7 @@ builder.Services.AddSwaggerGen();
 
 // Cấu hình JWT
 var key = builder.Configuration["Jwt:Key"];
-var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -51,12 +53,25 @@ builder.Services.AddAuthentication(options =>
 
         ValidateAudience = true,
         ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
 
         RequireExpirationTime = true,
         ValidateLifetime = true,
 
-        IssuerSigningKey = signingKey,
-        RequireSignedTokens = true,
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = context =>
+        {
+            // Bỏ qua phản hồi mặc định
+            context.HandleResponse();
+
+            // Trả về phản hồi tùy chỉnh
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Response.ContentType = "application/json";
+            var result = JsonSerializer.Serialize(new ResponseObject(401, "Unauthorized. Token is invalid or missing."));
+            return context.Response.WriteAsync(result);
+        }
     };
 });
 
@@ -76,7 +91,7 @@ app.UseRouting();
 app.UseCors(
         options => options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin()
     );
-app.UseAuthentication();
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllers();
