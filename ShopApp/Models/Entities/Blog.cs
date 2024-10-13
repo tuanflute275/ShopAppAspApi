@@ -12,22 +12,25 @@ namespace ShopApp.Models.Entities
         public int BlogId { get; set; }
 
         [Column("BlogImage", TypeName = "nvarchar(200)")]
-        public string BlogImage { get; set; }
+        public string? BlogImage { get; set; }
 
         [Column("BlogTitle", TypeName = "nvarchar(200)")]
         [Required]
         [StringLength(200)]
         public string BlogTitle { get; set; }
 
+        [Column("BlogSlug", TypeName = "nvarchar(200)")]
+        public string? BlogSlug { get; set; }
+
         [Column("BlogDescription", TypeName = "ntext")]
         [Required]
-        public string BlogDescription { get; set; }
+        public string? BlogDescription { get; set; }
 
         [Column("CreateDate")]
-        public DateTime CreateDate { get; set; } = DateTime.Now; 
+        public DateTime? CreateDate { get; set; } = DateTime.Now; 
 
         [Column("UpdateDate")]
-        public DateTime UpdateDate { get; set; } = DateTime.Now; 
+        public DateTime? UpdateDate { get; set; } = DateTime.Now; 
 
         [Column("UserId")]
         public int UserId { get; set; } 

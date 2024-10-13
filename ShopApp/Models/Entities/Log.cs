@@ -12,19 +12,19 @@ namespace ShopApp.Models.Entities
         public int LogId { get; set; }
 
         [Column("userName", TypeName = "nvarchar(255)")]
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
 
         [Column("workTation", TypeName = "nvarchar(255)")]
-        public string WorkTation { get; set; }
+        public string? WorkTation { get; set; }
 
         [Column("request", TypeName = "nvarchar(255)")]
-        public string Request { get; set; }
+        public string? Request { get; set; }
 
         [Column("response", TypeName = "ntext")]
-        public string Response { get; set; }
+        public string? Response { get; set; }
 
         [Column("ipAdress", TypeName = "nvarchar(255)")]
-        public string IpAdress { get; set; }
+        public string? IpAdress { get; set; }
 
         [Column("timeLogin")]
         public DateTime? TimeLogin { get; set; }

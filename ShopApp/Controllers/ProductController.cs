@@ -6,7 +6,6 @@ using ShopApp.Models.Entities;
 using ShopApp.Models.ViewModels;
 using ShopApp.Utils;
 using X.PagedList;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ShopApp.Controllers
 {
@@ -180,10 +179,12 @@ namespace ShopApp.Controllers
         }
 
         [HttpGet("new")]
-        public async Task<ActionResult<Product>> FindAllDataNew()
+        public async Task<ActionResult<Product>> FindAllDataNew(int limit = 3)
         {
+            limit = limit <= 1 ? 1 : limit;
             var products = await _context.Products.Include(p => p.Category)
                 .OrderByDescending(p => p.ProductId)
+                .Take(limit)
                 .ToListAsync();
             var productDTOs = products.Select(p => new ProductDTO
             {
@@ -204,10 +205,13 @@ namespace ShopApp.Controllers
 
 
         [HttpGet("sale")]
-        public async Task<ActionResult<Product>> FindAllDataSale()
+        public async Task<ActionResult<Product>> FindAllDataSale(int limit = 3)
         {
-            var products = await _context.Products.Include(p => p.Category)
+            limit = limit <= 1 ? 1 : limit;
+            var products = await _context.Products
+                .Include(p => p.Category)
                 .Where(p => p.ProductSalePrice > 0)
+                .Take(limit)
                 .ToListAsync();
             var productDTOs = products.Select(p => new ProductDTO
             {
@@ -227,10 +231,13 @@ namespace ShopApp.Controllers
         }
 
         [HttpGet("related/{slug}")]
-        public async Task<ActionResult<Product>> FindAllDataRelated(string slug)
+        public async Task<ActionResult<Product>> FindAllDataRelated(string slug, int limit = 3)
         {
-            var products = await _context.Products.Include(p => p.Category)
+            limit = limit <= 1 ? 1 : limit;
+            var products = await _context.Products
+                .Include(p => p.Category)
                 .Where(p => p.ProductSlug != slug)
+                .Take(limit)
                 .ToListAsync();
             var productDTOs = products.Select(p => new ProductDTO
             {

@@ -16,10 +16,10 @@ namespace ShopApp.Models.Entities
         public string CategoryName { get; set; }
 
         [Column(TypeName = "nvarchar(200)")]
-        public string CategorySlug { get; set; }
+        public string? CategorySlug { get; set; }
 
         [Column]
-        public bool CategoryStatus { get; set; }
+        public bool CategoryStatus { get; set; } = true;
 
         [JsonIgnore]
         public virtual ICollection<Product> Products { get; set; }

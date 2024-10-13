@@ -7,6 +7,8 @@ namespace ShopApp.Models.Entities
     public class UserRole
     {
         [Key]
+        public int Id { get; set; }
+
         [Column]
         [Required]
         [StringLength(255)]

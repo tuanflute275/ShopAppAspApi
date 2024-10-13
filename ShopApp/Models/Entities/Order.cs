@@ -30,10 +30,10 @@ namespace ShopApp.Models.Entities
         public DateTime OrderDate { get; set; }
 
         [Column("OrderPaymentMethods", TypeName = "nvarchar(100)")]
-        public string OrderPaymentMethods { get; set; }
+        public string? OrderPaymentMethods { get; set; }
 
         [Column("OrderStatusPayment", TypeName = "nvarchar(100)")]
-        public string OrderStatusPayment { get; set; }
+        public string? OrderStatusPayment { get; set; }
 
         [Column("OrderStatus")]
         public bool OrderStatus { get; set; }

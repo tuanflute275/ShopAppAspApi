@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApp.Data;
 
@@ -11,9 +12,11 @@ using ShopApp.Data;
 namespace ShopApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241013030251_v4")]
+    partial class v4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -401,12 +404,7 @@ namespace ShopApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Role");
                 });
@@ -473,25 +471,17 @@ namespace ShopApp.Migrations
 
             modelBuilder.Entity("ShopApp.Models.Entities.UserRole", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
+                        .HasMaxLength(255)
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("RoleId")
                         .HasMaxLength(255)
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasMaxLength(255)
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("UserRole");
                 });
@@ -584,13 +574,6 @@ namespace ShopApp.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("ShopApp.Models.Entities.Role", b =>
-                {
-                    b.HasOne("ShopApp.Models.Entities.User", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("ShopApp.Models.Entities.UserRole", b =>
                 {
                     b.HasOne("ShopApp.Models.Entities.Role", "Role")
@@ -638,8 +621,6 @@ namespace ShopApp.Migrations
             modelBuilder.Entity("ShopApp.Models.Entities.User", b =>
                 {
                     b.Navigation("Carts");
-
-                    b.Navigation("Roles");
 
                     b.Navigation("UserRoles");
                 });

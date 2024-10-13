@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ShopApp.Models.Entities
 {
@@ -15,14 +16,15 @@ namespace ShopApp.Models.Entities
         public string Code { get; set; }
 
         [Range(0, 100)] 
-        public int Percent { get; set; }
+        public int? Percent { get; set; }
 
         [Column(TypeName = "ntext")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Column]
-        public bool Active { get; set; }
+        public bool Active { get; set; } = true;
 
+        [JsonIgnore]
         public virtual ICollection<CouponCondition> CouponConditions { get; set; } = new List<CouponCondition>();
     }
 }

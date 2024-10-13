@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ShopApp.Models.Entities
 {
@@ -22,7 +23,7 @@ namespace ShopApp.Models.Entities
 
         [StringLength(200)]
         [Column(TypeName = "nvarchar(200)")]
-        public string UserAvatar { get; set; }
+        public string? UserAvatar { get; set; }
 
         [Required]
         [EmailAddress]
@@ -38,30 +39,32 @@ namespace ShopApp.Models.Entities
         [Phone]
         [StringLength(15)]
         [Column(TypeName = "nvarchar(15)")]
-        public string UserPhoneNumber { get; set; }
+        public string? UserPhoneNumber { get; set; }
 
         [StringLength(200)]
         [Column(TypeName = "nvarchar(200)")]
-        public string UserAddress { get; set; }
+        public string? UserAddress { get; set; }
 
         [Column]
-        public bool UserGender { get; set; }
+        public bool UserGender { get; set; } = true;
 
         [Column]
-        public bool UserActive { get; set; }
+        public bool UserActive { get; set; } = true;
 
         [Range(0, int.MaxValue)]
         [Column]
-        public int UserCount { get; set; }
+        public int? UserCount { get; set; }
 
         [Column]
-        public DateTime UserCurrentTime { get; set; } 
+        public DateTime? UserCurrentTime { get; set; } 
 
         [Column]
-        public DateTime UserUnlockTime { get; set; }
+        public DateTime? UserUnlockTime { get; set; }
 
+        public virtual ICollection<Role> Roles { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
     }
 }

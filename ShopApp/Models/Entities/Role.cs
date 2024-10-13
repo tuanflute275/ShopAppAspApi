@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ShopApp.Models.Entities
 {
@@ -16,7 +17,8 @@ namespace ShopApp.Models.Entities
         public string RoleName { get; set; }
 
         [Column(TypeName = "ntext")]
-        public string RoleDescription { get; set; }
+        public string? RoleDescription { get; set; }
+        [JsonIgnore]
         public virtual ICollection<UserRole> UserRoles { get; set; }
     }
 }
