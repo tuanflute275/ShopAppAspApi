@@ -40,71 +40,79 @@ namespace ShopApp.Controllers
         {
             try
             {
-                var carts = await _context.Carts.Where(x => x.UserId == model.UserId).ToListAsync();
-                TotalDTO total = new TotalDTO();
-                foreach (var item in carts)
-                {
-                    total.Quantity += item.Quantity;
-                    total.Amount += (double)item.TotalAmount;
-                }
-                Order order = new Order
-                {
-                    OrderFullName = model.OrderFullName,
-                    OrderAddress = model.OrderAddress,
-                    OrderAmount = total.Amount,
-                    OrderQuantity = (int)total.Quantity,
-                    OrderEmail = model.OrderEmail,
-                    OrderDate = DateTime.Now,
-                    OrderStatus = 1,
-                    OrderNote = model.OrderNote,
-                    OrderPhoneNumber = model.OrderPhoneNumber,
-                    OrderStatusPayment = model.OrderStatusPayment,
-                    OrderPaymentMethods = model.OrderPaymentMethods,
-                };
-                //await _context.Orders.AddAsync(order);
-                //await _context.SaveChangesAsync();
-
-                // get current orderId
-                var orderId = order.OrderId;
-                foreach (var item in carts)
-                {
-                    OrderDetail orderDetail = new OrderDetail
+                List<Cart> carts = await _context.Carts.Include(x => x.Product).Where(x => x.UserId == model.UserId).ToListAsync();
+                if (carts.Count > 0) {
+                    TotalDTO total = new TotalDTO();
+                    foreach (var item in carts)
                     {
-                        OrderId = orderId,
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity,
-                        TotalMoney = Convert.ToDouble(item.TotalAmount)
-                    };
-                    //await _context.OrderDetails.AddAsync(orderDetail);
-                }
-                // send email confirm order success
-                EmailModel emailModel = new EmailModel()
-                {
-                    Subject = "Order Confirmation",
-                    To = order.OrderEmail
-                };
-
-                using (MailMessage mm = new MailMessage(emailModel.From, emailModel.To))
-                {
-                    mm.Subject = emailModel.Subject;
-                    mm.Body = BodyOrderSuccessMail(order, carts);
-                    mm.IsBodyHtml = true;
-                    using (SmtpClient smtp = new SmtpClient())
-                    {
-                        smtp.Host = "smtp.gmail.com";
-                        smtp.EnableSsl = true;
-                        NetworkCredential NetworkCred = new NetworkCredential(emailModel.From, emailModel.Password);
-                        smtp.UseDefaultCredentials = false;
-                        smtp.EnableSsl = true;
-                        smtp.Credentials = NetworkCred;
-                        smtp.Port = 587;
-                        smtp.Send(mm);
+                        total.Quantity += item.Quantity;
+                        total.Amount += (double)item.TotalAmount;
                     }
+                    Order order = new Order
+                    {
+                        OrderFullName = model.OrderFullName,
+                        OrderAddress = model.OrderAddress,
+                        OrderAmount = total.Amount,
+                        OrderQuantity = (int)total.Quantity,
+                        OrderEmail = model.OrderEmail,
+                        OrderDate = DateTime.Now,
+                        OrderStatus = 1,
+                        OrderNote = model.OrderNote,
+                        OrderPhoneNumber = model.OrderPhoneNumber,
+                        OrderStatusPayment = model.OrderStatusPayment,
+                        OrderPaymentMethods = model.OrderPaymentMethods,
+                        UserId = model.UserId,
+                    };
+                    await _context.Orders.AddAsync(order);
+                    await _context.SaveChangesAsync();
+
+                    // get current orderId
+                    var orderId = order.OrderId;
+                    foreach (var item in carts)
+                    {
+                        OrderDetail orderDetail = new OrderDetail
+                        {
+                            OrderId = orderId,
+                            ProductId = item.ProductId,
+                            Quantity = item.Quantity,
+                            TotalMoney = Convert.ToDouble(item.TotalAmount)
+                        };
+                        await _context.OrderDetails.AddAsync(orderDetail);
+                    }
+                    // send email confirm order success
+                    EmailModel emailModel = new EmailModel()
+                    {
+                        Subject = "Order Confirmation",
+                        To = order.OrderEmail
+                    };
+
+                    using (MailMessage mm = new MailMessage(emailModel.From, emailModel.To))
+                    {
+                        mm.Subject = emailModel.Subject;
+                        mm.Body = BodyOrderSuccessMail(order, carts, total.Amount);
+                        mm.IsBodyHtml = true;
+                        using (SmtpClient smtp = new SmtpClient())
+                        {
+                            smtp.Host = "smtp.gmail.com";
+                            smtp.EnableSsl = true;
+                            NetworkCredential NetworkCred = new NetworkCredential(emailModel.From, emailModel.Password);
+                            smtp.UseDefaultCredentials = false;
+                            smtp.EnableSsl = true;
+                            smtp.Credentials = NetworkCred;
+                            smtp.Port = 587;
+                            smtp.Send(mm);
+                        }
+                    }
+                    // remove cart when order success
+                    _context.Carts.RemoveRange(carts);
+                    await _context.SaveChangesAsync();
+                    return Ok(new ResponseObject(200, "Order successfully,  please check email!"));
                 }
-                // remove cart when order success
-                //_context.Carts.RemoveRange(carts);
-                //await _context.SaveChangesAsync();
-                return Ok(new ResponseObject(200, "Order successfully,  please check email!"));
+                else
+                {
+                    return BadRequest(new ResponseObject(400, "Cart is empty"));
+                }
+                
             }
             catch (Exception ex) {
                 return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
@@ -154,7 +162,7 @@ namespace ShopApp.Controllers
             }
         }
 
-        public static string BodyOrderSuccessMail(Order order, List<Cart> carts)
+        public static string BodyOrderSuccessMail(Order order, List<Cart> carts, double totalAmount)
         {
             string body = string.Empty;
             string unit = "";
@@ -166,21 +174,23 @@ namespace ShopApp.Controllers
             foreach (var item in carts)
             {
                 unit += "<tr>";
-                unit += "<td width = '75 % ' align='left' style='font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px; '>";
-                unit += item.Product.ProductName + " (" + item.Quantity + ") </td>";
-                unit += "<td width = '25 % ' align='left' style='font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px; '>";
-                unit += string.Format("{0:#,0} VND", item.Product.ProductSalePrice > 0 ? item.Product.ProductSalePrice : item.Product.ProductPrice) + "</td>";
+                unit += "<td width='75%' align='left' style='font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;'>";
+                unit += WebUtility.HtmlEncode(item.Product?.ProductName ?? "Unknown Product") + " (" + item.Quantity + ")</td>";
+                unit += "<td width='25%' align='left' style='font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;'>";
+                var productPrice = item.Product?.ProductSalePrice > 0 ? item.Product.ProductSalePrice : item.Product?.ProductPrice ?? 0;
+                unit += string.Format("{0:#,0} VND", productPrice) + "</td>";
                 unit += "</tr>";
             }
-            
 
+            // Thay thế các placeholder trong mẫu email với giá trị thực tế
             body = body.Replace("{{CreatedAt}}", order.OrderDate.ToString());
-            body = body.Replace("{{FullName}}", order.OrderFullName);
-            body = body.Replace("{{Phone}}", order.OrderPhoneNumber);
-            body = body.Replace("{{Address}}", order.OrderAddress);
+            body = body.Replace("{{FullName}}", WebUtility.HtmlEncode(order.OrderFullName));
+            body = body.Replace("{{Phone}}", WebUtility.HtmlEncode(order.OrderPhoneNumber));
+            body = body.Replace("{{Address}}", WebUtility.HtmlEncode(order.OrderAddress));
             body = body.Replace("{{OrderId}}", order.OrderId.ToString());
             body = body.Replace("{{Unit}}", unit);
-            body = body.Replace("{{ToTalPrice}}", string.Format("{0:#,0} VND", order.OrderAmount));
+            body = body.Replace("{{ToTalPrice}}", string.Format("{0:#,0} VND", totalAmount));
+
             return body;
         }
     }
