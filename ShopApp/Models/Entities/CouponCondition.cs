@@ -8,10 +8,9 @@ namespace ShopApp.Models.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int CouponConditionId { get; set; }
 
         [Column]
-        [Range(0, int.MaxValue)]
         public int CouponId { get; set; }
 
         [Column(TypeName = "nvarchar(255)")]

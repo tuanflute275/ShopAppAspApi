@@ -52,11 +52,9 @@ namespace ShopApp.Models.Entities
         public int? CouponId { get; set; }
 
         [ForeignKey("UserId")]
-        [JsonIgnore]
         public virtual User User { get; set; }
 
         [ForeignKey("CouponId")]
-        [JsonIgnore]
         public virtual Coupon Coupon { get; set; }
 
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();

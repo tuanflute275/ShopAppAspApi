@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ShopApp.Models.Entities
 {
@@ -37,5 +38,6 @@ namespace ShopApp.Models.Entities
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
+        public virtual ICollection<BlogComment> BlogComments { get; set; }
     }
 }

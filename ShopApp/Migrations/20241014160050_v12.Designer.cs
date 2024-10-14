@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApp.Data;
 
@@ -11,9 +12,11 @@ using ShopApp.Data;
 namespace ShopApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014160050_v12")]
+    partial class v12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,18 +91,7 @@ namespace ShopApp.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Email");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Message");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Name");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2")
@@ -108,6 +100,14 @@ namespace ShopApp.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("UserId");
+
+                    b.Property<string>("message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BlogCommentId");
 
@@ -177,11 +177,11 @@ namespace ShopApp.Migrations
 
             modelBuilder.Entity("ShopApp.Models.Entities.Coupon", b =>
                 {
-                    b.Property<int>("CouponId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
@@ -196,18 +196,18 @@ namespace ShopApp.Migrations
                     b.Property<int?>("Percent")
                         .HasColumnType("int");
 
-                    b.HasKey("CouponId");
+                    b.HasKey("Id");
 
                     b.ToTable("Coupon");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.CouponCondition", b =>
                 {
-                    b.Property<int>("CouponConditionId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponConditionId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Attribute")
                         .IsRequired()
@@ -228,7 +228,7 @@ namespace ShopApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("CouponConditionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CouponId");
 

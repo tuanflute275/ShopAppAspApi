@@ -9,7 +9,7 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("/api/coupon")]
     public class CouponController : Controller
@@ -33,10 +33,10 @@ namespace ShopApp.Controllers
                 switch (sort)
                 {
                     case "Id-ASC":
-                        coupons = await _context.Coupons.OrderBy(x => x.Id).ToListAsync();
+                        coupons = await _context.Coupons.OrderBy(x => x.CouponId).ToListAsync();
                         break;
                     case "Id-DESC":
-                        coupons = await _context.Coupons.OrderByDescending(x => x.Id).ToListAsync();
+                        coupons = await _context.Coupons.OrderByDescending(x => x.CouponId).ToListAsync();
                         break;
 
                     case "Name-ASC":
@@ -52,10 +52,10 @@ namespace ShopApp.Controllers
                 switch (sort)
                 {
                     case "Id-ASC":
-                        coupons = await _context.Coupons.Where(x => x.Code.Contains(code)).OrderBy(x => x.Id).ToListAsync();
+                        coupons = await _context.Coupons.Where(x => x.Code.Contains(code)).OrderBy(x => x.CouponId).ToListAsync();
                         break;
                     case "Id-DESC":
-                        coupons = await _context.Coupons.Where(x => x.Code.Contains(code)).OrderByDescending(x => x.Id).ToListAsync();
+                        coupons = await _context.Coupons.Where(x => x.Code.Contains(code)).OrderByDescending(x => x.CouponId).ToListAsync();
                         break;
 
                     case "Name-ASC":
@@ -114,7 +114,7 @@ namespace ShopApp.Controllers
         public async Task<double> CalculateDiscountAsync(Coupon coupon, double totalAmount)
         {
             var conditions = await _context.CouponConditions
-                .Where(cc => cc.CouponId == coupon.Id)
+                .Where(cc => cc.CouponId == coupon.CouponId)
                 .ToListAsync();
 
             double discount = 0.0;

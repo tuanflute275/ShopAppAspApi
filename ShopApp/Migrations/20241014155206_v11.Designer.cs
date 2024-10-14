@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApp.Data;
 
@@ -11,9 +12,11 @@ using ShopApp.Data;
 namespace ShopApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014155206_v11")]
+    partial class v11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,55 +70,6 @@ namespace ShopApp.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Blog");
-                });
-
-            modelBuilder.Entity("ShopApp.Models.Entities.BlogComment", b =>
-                {
-                    b.Property<int>("BlogCommentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("BlogCommentId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BlogCommentId"));
-
-                    b.Property<int>("BlogId")
-                        .HasColumnType("int")
-                        .HasColumnName("BlogId");
-
-                    b.Property<DateTime?>("CreateDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreateDate");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Email");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Message");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Name");
-
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdateDate");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("UserId");
-
-                    b.HasKey("BlogCommentId");
-
-                    b.HasIndex("BlogId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("BlogComment");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.Cart", b =>
@@ -177,11 +131,11 @@ namespace ShopApp.Migrations
 
             modelBuilder.Entity("ShopApp.Models.Entities.Coupon", b =>
                 {
-                    b.Property<int>("CouponId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
@@ -196,18 +150,18 @@ namespace ShopApp.Migrations
                     b.Property<int?>("Percent")
                         .HasColumnType("int");
 
-                    b.HasKey("CouponId");
+                    b.HasKey("Id");
 
                     b.ToTable("Coupon");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.CouponCondition", b =>
                 {
-                    b.Property<int>("CouponConditionId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponConditionId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Attribute")
                         .IsRequired()
@@ -228,7 +182,7 @@ namespace ShopApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("CouponConditionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CouponId");
 
@@ -553,25 +507,6 @@ namespace ShopApp.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ShopApp.Models.Entities.BlogComment", b =>
-                {
-                    b.HasOne("ShopApp.Models.Entities.Blog", "Blog")
-                        .WithMany("BlogComments")
-                        .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ShopApp.Models.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Blog");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ShopApp.Models.Entities.Cart", b =>
                 {
                     b.HasOne("ShopApp.Models.Entities.Product", "Product")
@@ -673,11 +608,6 @@ namespace ShopApp.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ShopApp.Models.Entities.Blog", b =>
-                {
-                    b.Navigation("BlogComments");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.Category", b =>

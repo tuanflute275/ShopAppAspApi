@@ -20,14 +20,14 @@ namespace ShopApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            var orders = await _context.Orders.Include(x => x.OrderDetails).ToListAsync();
+            var orders = await _context.Orders.Include(x => x.OrderDetails).Include(x => x.User).Include(x => x.Coupon).ToListAsync();
             return Ok(orders);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> FingById(int id)
         {
-            var order = await _context.Orders.Include(x => x.OrderDetails).FirstOrDefaultAsync(x => x.OrderId == id);
+            var order = await _context.Orders.Include(x => x.OrderDetails).Include(x => x.User).Include(x => x.Coupon).FirstOrDefaultAsync(x => x.OrderId == id);
             if (order == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));

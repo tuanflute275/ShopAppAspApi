@@ -27,10 +27,10 @@ namespace ShopApp.Controllers
                 switch (sort)
                 {
                     case "Id-ASC":
-                        couponConditions = await _context.CouponConditions.OrderBy(x => x.Id).ToListAsync();
+                        couponConditions = await _context.CouponConditions.OrderBy(x => x.CouponConditionId).ToListAsync();
                         break;
                     case "Id-DESC":
-                        couponConditions = await _context.CouponConditions.OrderByDescending(x => x.Id).ToListAsync();
+                        couponConditions = await _context.CouponConditions.OrderByDescending(x => x.CouponConditionId).ToListAsync();
                         break;
                 }
             }
@@ -44,7 +44,7 @@ namespace ShopApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CouponCondition>> FindById(int id)
         {
-            var couponCondition = await _context.CouponConditions.Include(x => x.Coupon).FirstOrDefaultAsync(x => x.Id == id);
+            var couponCondition = await _context.CouponConditions.Include(x => x.Coupon).FirstOrDefaultAsync(x => x.CouponConditionId == id);
             if (couponCondition == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
