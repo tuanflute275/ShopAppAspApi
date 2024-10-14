@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ShopApp.Data;
-using ShopApp.DTO;
 using ShopApp.Models.Entities;
+using ShopApp.Models.ViewModels;
 using ShopApp.Utils;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -23,27 +23,27 @@ namespace ShopApp.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] LoginDTO dto)
+        public async Task<ActionResult> Login([FromBody] LoginModel model)
         {
-            if (dto == null)
+            if (model == null)
             {
                 return BadRequest(new ResponseObject(400, "Invalid request."));
             }
             try
             {
-                var checkUser = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == dto.Email);
+                var checkUser = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == model.Email);
 
                 if (checkUser == null)
                 {
                     return BadRequest(new ResponseObject(400, "Account does not exist."));
                 }
 
-                if (dto.Password.Length < 6)
+                if (model.Password.Length < 6)
                 {
                     return BadRequest(new ResponseObject(400, "Password must be longer than 6 characters."));
                 }
 
-                if (!BCrypt.Net.BCrypt.Verify(dto.Password, checkUser.UserPassword))
+                if (!BCrypt.Net.BCrypt.Verify(model.Password, checkUser.UserPassword))
                 {
                     return BadRequest(new ResponseObject(400, "Incorrect password."));
                 }
@@ -93,34 +93,34 @@ namespace ShopApp.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterDTO dto)
+        public async Task<ActionResult> Register([FromBody] RegisterModel model)
         {
-            if (dto == null)
+            if (model == null)
             {
                 return BadRequest(new ResponseObject(400, "Invalid request."));
             }
             try
             {
-                var checkUserName = _context.Users.FirstOrDefaultAsync(x => x.UserName == dto.UserName);
-                var checkEmail = _context.Users.FirstOrDefaultAsync(x => x.UserEmail == dto.Email);
+                var checkUserName = _context.Users.FirstOrDefaultAsync(x => x.UserName == model.UserName);
+                var checkEmail = _context.Users.FirstOrDefaultAsync(x => x.UserEmail == model.Email);
                 if (checkUserName != null) {
                    if(checkEmail != null)
                     {
-                        if(dto.Password.Length >= 6)
+                        if(model.Password.Length >= 6)
                         {
-                            string passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password, 12);
+                            string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, 12);
                             User user = new User
                             {
-                                UserName = dto.UserName,
-                                UserFullName = dto.FullName,
-                                UserEmail = dto.Email,
+                                UserName = model.UserName,
+                                UserFullName = model.FullName,
+                                UserEmail = model.Email,
                                 UserPassword = passwordHash
                             };
                             await _context.Users.AddAsync(user);
                             await _context.SaveChangesAsync();
                             // lấy userId vừa tạo
                             var userId = user.Id;
-                            var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == dto.Role);
+                            var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == model.Role);
                             if (role != null)
                             {
                                 var userRole = new UserRole
@@ -155,5 +155,7 @@ namespace ShopApp.Controllers
                 return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
             }
         }
+
+
     }
 }

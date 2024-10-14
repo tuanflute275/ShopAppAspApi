@@ -166,6 +166,7 @@ namespace ShopApp.Controllers
                     blog.BlogTitle = model.BlogTitle;
                     blog.BlogSlug = Util.GenerateSlug(model.BlogTitle);
                     blog.UserId = model.UserId;
+                    blog.CreateDate = DateTime.Now;
                     blog.BlogDescription = model.BlogDescription;
                     await _context.Blogs.AddAsync(blog);
                     _context.SaveChanges();
@@ -220,6 +221,7 @@ namespace ShopApp.Controllers
                     blog.BlogTitle = model.BlogTitle;
                     blog.BlogSlug = Util.GenerateSlug(model.BlogTitle);
                     blog.UserId = model.UserId;
+                    blog.UpdateDate = DateTime.Now;
                     blog.BlogDescription = model.BlogDescription;
                     _context.SaveChanges();
                     return Ok(new ResponseObject(200, "Update data successfully", blog));

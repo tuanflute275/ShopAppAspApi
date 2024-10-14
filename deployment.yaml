@@ -1,0 +1,95 @@
+version: "3.8"
+
+services:
+  sqlserver-container:
+    container_name: sqlserver-container
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Admin@1234
+    ports:
+      - "1433:1433"
+    networks:
+      - shopapp-asp-network
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  # oracledb:
+  #   image: container-registry.oracle.com/database/standard:latest
+  #   container_name: oracle-standard-container
+  #   shm_size: '8gb'
+  #   restart: unless-stopped
+  #   ports:
+  #     - 1522:1521
+  #   env_file:
+  #     - oracle_db_env.dat
+
+  #   volumes:
+  #     - ./db:/opt/oracle/oradata
+
+  asp-api-container:
+    container_name: asp-api-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MSSQL_SA_PASSWORD=Admin@1234
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver-container
+    networks:
+      - shopapp-asp-network
+
+volumes:
+  sqlserver-data:
+    driver: local
+
+networks:
+  shopapp-asp-network:
+    name: shopapp-asp-network
+    driver: bridge
+    external: true
+# docker-compose -f ./deployment.yaml down
+# docker-compose -f ./deployment.yaml up -d
+
+# kiểm tra xem có container nào sử dụng network không
+# docker network inspect shopapp-asp-network
+# docker network create shopapp-asp-network
+
+# khởi tạo database
+# docker-compose -f ./deployment.yaml rm -s -f sqlserver-container
+# docker-compose -f ./deployment.yaml up -d sqlserver-container
+
+# truy cập vào database local
+# sqlcmd -S localhost -U SA -P "Admin@1234"
+
+# truy cập vào database cloud
+# tải các thư viện cần thiết cho sql server
+# curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+# curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
+# apt-get update
+# /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "Admin@1234"
+# sử dụng sql với command ...
+
+# kiểm tra tất cả database
+# EXEC sp_databases;
+# GO
+
+# kiểm tra tất cả các table của database
+# SELECT name AS TableName FROM sys.tables;
+
+# tạo image docker asp api
+# docker-compose -f ./deployment.yaml rm -s -f asp-api-container
+# docker-compose -f ./deployment.yaml up -d asp-api-container
+
+# kiểm tra network
+# docker network ls
+# docker network inspect 07e49996e124
+
+# copy project local to cloud
+# scp -pr . root@159.89.205.32:/root/ShopApp/
+
+# cloud vps
+# ssh root@159.89.205.32
+# GA5rgmDKbQkdx

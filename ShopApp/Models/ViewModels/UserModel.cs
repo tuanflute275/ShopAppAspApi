@@ -1,7 +1,10 @@
-﻿namespace ShopApp.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopApp.Models.ViewModels
 {
     public class UserModel
     {
+        [Required(ErrorMessage = "UserName không được bỏ trống")]
         public string UserName { get; set; }
         public string UserFullName { get; set; }
         public IFormFile? ImageFile { get; set; }
