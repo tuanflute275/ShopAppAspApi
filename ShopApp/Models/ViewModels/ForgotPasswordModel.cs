@@ -2,10 +2,10 @@
 
 namespace ShopApp.Models.ViewModels
 {
-    public class RoleModel
+    public class ForgotPasswordModel
     {
         [Required]
-        public string RoleName { get; set; }
-        public string RoleDesc { get; set; }
+        [EmailAddress]
+        public string UserEmail { get; set; }
     }
 }

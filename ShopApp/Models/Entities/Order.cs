@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace ShopApp.Models.Entities
 {
-    [Table("Orders")]
+    [Table("Order")]
     public class Order
     {
         [Key]
@@ -24,10 +24,10 @@ namespace ShopApp.Models.Entities
 
         [Column("OrderEmail", TypeName = "nvarchar(200)")]
         [EmailAddress]
-        public string OrderEmail { get; set; }
+        public string? OrderEmail { get; set; }
 
         [Column("OrderDate")]
-        public DateTime OrderDate { get; set; }
+        public DateTime? OrderDate { get; set; } = default(DateTime?);
 
         [Column("OrderPaymentMethods", TypeName = "nvarchar(100)")]
         public string? OrderPaymentMethods { get; set; }
@@ -36,14 +36,15 @@ namespace ShopApp.Models.Entities
         public string? OrderStatusPayment { get; set; }
 
         [Column("OrderStatus")]
-        public bool OrderStatus { get; set; }
+        public int? OrderStatus { get; set; }
+        public int? OrderQuantity { get; set; }
 
         [Column("OrderAmount")]
         [Range(0, double.MaxValue)]
-        public double OrderAmount { get; set; }
+        public double? OrderAmount { get; set; }
 
         [Column("OrderNote", TypeName = "ntext")]
-        public string OrderNote { get; set; }
+        public string? OrderNote { get; set; }
 
         [Column]
         public int UserId { get; set; }

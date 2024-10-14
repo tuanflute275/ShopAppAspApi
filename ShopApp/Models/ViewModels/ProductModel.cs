@@ -4,7 +4,7 @@ namespace ShopApp.Models.ViewModels
 {
     public class ProductModel
     {
-        [Required(ErrorMessage = "ProductName không được bỏ trống")]
+        [Required]
         public string ProductName { get; set; }
         public IFormFile ImageFile { get; set; }
         public string? OldImage { get; set; }

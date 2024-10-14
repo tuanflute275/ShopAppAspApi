@@ -127,23 +127,38 @@ namespace ShopApp.Controllers
                         // Cập nhật đường dẫn hình ảnh vào thuộc tính sản phẩm
                         user.UserAvatar = $"http://{HttpContext.Request.Host.Value}/uploads/users/{model.ImageFile.FileName}";
                     }
-
+                    string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.UserPassword, 12);
                     user.UserName = model.UserName;
                     user.UserFullName = model.UserName;
                     user.UserEmail = model.UserName;
-                    user.UserPassword = model.UserName;
+                    user.UserPassword = passwordHash;
                     user.UserPhoneNumber = model.UserName;
                     user.UserAddress = model.UserName;
                     user.UserGender = model.UserGender;
                     user.UserActive = model.UserActive;
                     await _context.Users.AddAsync(user);
-                    _context.SaveChanges();
-                    return Ok(new ResponseObject(200, "Insert data successfully", null));
+                    await _context.SaveChangesAsync();
+
+                    // lấy userId vừa tạo
+                    var userId = user.Id;
+                    var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == model.Role);
+                    if (role != null)
+                    {
+                        var userRole = new UserRole
+                        {
+                            UserId = userId,
+                            RoleId = role.Id
+                        };
+
+                        _context.UserRoles.Add(userRole);
+                        await _context.SaveChangesAsync();
+                    }
+                    return Ok(new ResponseObject(200, "Insert data successfully", model));
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseObject(404, "Insert data failed", ex.Message));
+                return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
             }
         }
 
@@ -188,17 +203,43 @@ namespace ShopApp.Controllers
                     user.UserName = model.UserName;
                     user.UserFullName = model.UserName;
                     user.UserEmail = model.UserEmail;
-                    user.UserPassword = model.UserPassword;
+                    user.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.UserPassword, 12);
                     user.UserPhoneNumber = model.UserPhoneNumber;
                     user.UserAddress = model.UserAddress;
                     user.UserGender = model.UserGender;
                     user.UserActive = model.UserActive;
-                    _context.SaveChanges();
-                    return Ok(new ResponseObject(200, "Update data successfully", user));
+                    await _context.SaveChangesAsync();
+
+                    // lấy userId vừa tạo
+                    var userId = id;
+                    var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == model.Role);
+                    if (role != null)
+                    {
+                        // check data role
+                        var checkRoleInDb = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserId == userId);
+                        if (checkRoleInDb == null) 
+                        {
+                            var userRole = new UserRole
+                            {
+                                UserId = userId,
+                                RoleId = role.Id
+                            };
+                            _context.UserRoles.Add(userRole);
+                            await _context.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            checkRoleInDb.RoleId = role.Id;
+                            await _context.SaveChangesAsync();
+                        }
+
+                       
+                    }
+                    return Ok(new ResponseObject(200, "Update data successfully", model));
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest(new ResponseObject(404, "Update data failed"));
+                    return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
                 }
             }
             else
@@ -223,7 +264,7 @@ namespace ShopApp.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseObject(404, "Insert data failed"));
+                return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
             }
         }
     }

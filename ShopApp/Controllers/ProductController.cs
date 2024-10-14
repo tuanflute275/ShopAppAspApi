@@ -311,7 +311,7 @@ namespace ShopApp.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseObject(404, "Insert data failed", ex.Message));
+                return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
             }
         }
 
@@ -365,7 +365,7 @@ namespace ShopApp.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest(new ResponseObject(404, "Update data failed"));
+                    return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
                 }
             }
             else
@@ -390,7 +390,7 @@ namespace ShopApp.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseObject(404, "Insert data failed"));
+                return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
             }
         }
     }

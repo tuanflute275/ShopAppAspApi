@@ -18,10 +18,6 @@ namespace ShopApp.Models.Entities
         [Column("ProductId")]
         public int ProductId { get; set; }
 
-        [Column("Price")]
-        [Range(0, double.MaxValue)]
-        public double Price { get; set; }
-
         [Column("Quantity")]
         [Range(0, int.MaxValue)]
         public int Quantity { get; set; }

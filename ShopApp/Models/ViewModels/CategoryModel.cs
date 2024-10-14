@@ -5,7 +5,7 @@ namespace ShopApp.Models.ViewModels
 {
     public class CategoryModel
     {
-        [Required(ErrorMessage = "CategoryName không được bỏ trống")]
+        [Required]
         public string CategoryName { get; set; }
         public bool CategoryStatus { get; set; }
     }

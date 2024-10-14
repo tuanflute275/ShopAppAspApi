@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApp.Data;
 
@@ -11,9 +12,11 @@ using ShopApp.Data;
 namespace ShopApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014095651_v8")]
+    partial class v8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -279,9 +282,6 @@ namespace ShopApp.Migrations
                         .HasColumnType("nvarchar(15)")
                         .HasColumnName("OrderPhoneNumber");
 
-                    b.Property<int?>("OrderQuantity")
-                        .HasColumnType("int");
-
                     b.Property<int?>("OrderStatus")
                         .HasColumnType("int")
                         .HasColumnName("OrderStatus");
@@ -299,7 +299,7 @@ namespace ShopApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.OrderDetail", b =>
@@ -314,6 +314,10 @@ namespace ShopApp.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int")
                         .HasColumnName("OrderId");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float")
+                        .HasColumnName("Price");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int")

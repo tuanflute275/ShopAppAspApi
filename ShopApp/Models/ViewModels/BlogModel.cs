@@ -1,7 +1,10 @@
-﻿namespace ShopApp.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShopApp.Models.ViewModels
 {
     public class BlogModel
     {
+        [Required]
         public string BlogTitle { get; set; }
         public IFormFile? ImageFile { get; set; }
         public string? OldImage { get; set; }

@@ -17,7 +17,7 @@ namespace ShopApp.Models.Entities
 
         [Column("TotalAmount")]
         [Range(0, int.MaxValue)]
-        public int? TotalAmount { get; set; }
+        public double? TotalAmount { get; set; }
 
         [Column("ProductId")]
         public int ProductId { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApp.Data;
 
@@ -11,9 +12,11 @@ using ShopApp.Data;
 namespace ShopApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014090014_v6")]
+    partial class v6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,15 +252,16 @@ namespace ShopApp.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("OrderAddress");
 
-                    b.Property<double?>("OrderAmount")
+                    b.Property<double>("OrderAmount")
                         .HasColumnType("float")
                         .HasColumnName("OrderAmount");
 
-                    b.Property<DateTime?>("OrderDate")
+                    b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("OrderDate");
 
                     b.Property<string>("OrderEmail")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("OrderEmail");
 
@@ -267,6 +271,7 @@ namespace ShopApp.Migrations
                         .HasColumnName("OrderFullName");
 
                     b.Property<string>("OrderNote")
+                        .IsRequired()
                         .HasColumnType("ntext")
                         .HasColumnName("OrderNote");
 
@@ -279,11 +284,8 @@ namespace ShopApp.Migrations
                         .HasColumnType("nvarchar(15)")
                         .HasColumnName("OrderPhoneNumber");
 
-                    b.Property<int?>("OrderQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("OrderStatus")
-                        .HasColumnType("int")
+                    b.Property<bool>("OrderStatus")
+                        .HasColumnType("bit")
                         .HasColumnName("OrderStatus");
 
                     b.Property<string>("OrderStatusPayment")
@@ -299,7 +301,7 @@ namespace ShopApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.OrderDetail", b =>
@@ -314,6 +316,10 @@ namespace ShopApp.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int")
                         .HasColumnName("OrderId");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float")
+                        .HasColumnName("Price");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int")
