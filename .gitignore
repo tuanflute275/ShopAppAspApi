@@ -362,11 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Bỏ qua tất cả các file hình ảnh
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.bmp
-*.tiff
-*.svg
+# Bỏ qua tất cả các file trong wwwroot/Uploads/products
+**wwwroot/Uploads/products/*
