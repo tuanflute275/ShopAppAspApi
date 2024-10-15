@@ -7,11 +7,13 @@ using ShopApp.Utils;
 using System.Net.Mail;
 using System.Net;
 using ShopApp.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShopApp.Controllers
 {
     [ApiController]
     [Route("api/order")]
+    [Authorize(Roles ="Admin")]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;

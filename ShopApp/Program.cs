@@ -59,20 +59,6 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
 
     };
-    options.Events = new JwtBearerEvents
-    {
-        OnChallenge = context =>
-        {
-            // Bỏ qua phản hồi mặc định
-            context.HandleResponse();
-
-            // Trả về phản hồi tùy chỉnh
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            context.Response.ContentType = "application/json";
-            var result = JsonSerializer.Serialize(new ResponseObject(401, "Unauthorized. Token is invalid or missing."));
-            return context.Response.WriteAsync(result);
-        }
-    };
 });
 
 var app = builder.Build();
