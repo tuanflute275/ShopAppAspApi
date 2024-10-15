@@ -37,7 +37,9 @@ namespace ShopApp.Models.Entities
         public int UserId { get; set; } 
 
         [ForeignKey("UserId")]
+        [JsonIgnore]
         public virtual User User { get; set; }
+        [JsonIgnore]
         public virtual ICollection<BlogComment> BlogComments { get; set; } = new List<BlogComment>();   
     }
 }

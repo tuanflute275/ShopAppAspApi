@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
+using ShopApp.DTO;
 using ShopApp.Models.Entities;
 using ShopApp.Models.ViewModels;
 using ShopApp.Utils;
@@ -77,23 +78,59 @@ namespace ShopApp.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Blog>> FindById(int id)
         {
-            var blog = await _context.Blogs.Include(p => p.User).FirstOrDefaultAsync(p => p.BlogId == id);
+            var blog = await _context.Blogs
+                .Include(x => x.BlogComments)
+                .FirstOrDefaultAsync(p => p.BlogId == id);
             if (blog == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
             }
-            return Ok(new ResponseObject(200, "Query data successfully", blog));
+            var blogDTO = new BlogDTO
+            {
+                BlogId = blog.BlogId,
+                BlogTitle = blog.BlogTitle,
+                BlogSlug = blog.BlogSlug,
+                BlogImage = blog.BlogImage,
+                BlogDescription = blog.BlogDescription,
+                CreateDate = blog.CreateDate,
+                UpdateDate = blog.UpdateDate,
+                BlogComments = blog.BlogComments.Select(c => new BlogCommentDTO
+                {
+                    UserId = c.UserId,
+                    Email = c.Email,
+                    Message = c.Message,
+                    Name = c.Name
+                }).ToList()
+            };
+            return Ok(new ResponseObject(200, "Query data successfully", blogDTO));
         }
 
         [HttpGet("{slug}")]
         public async Task<ActionResult<Blog>> FindBySlug(string slug)
         {
-            var blog = await _context.Blogs.Include(p => p.User).FirstOrDefaultAsync(p => p.BlogSlug == slug);
+            var blog = await _context.Blogs.Include(p => p.BlogComments).FirstOrDefaultAsync(p => p.BlogSlug == slug);
             if (blog == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with slug {slug}", null));
             }
-            return Ok(new ResponseObject(200, "Query data successfully", blog));
+            var blogDTO = new BlogDTO
+            {
+                BlogId = blog.BlogId,
+                BlogTitle = blog.BlogTitle,
+                BlogSlug = blog.BlogSlug,
+                BlogImage = blog.BlogImage,
+                BlogDescription = blog.BlogDescription,
+                CreateDate = blog.CreateDate,
+                UpdateDate = blog.UpdateDate,
+                BlogComments = blog.BlogComments.Select(c => new BlogCommentDTO
+                {
+                    UserId = c.UserId,
+                    Email = c.Email,
+                    Message = c.Message,
+                    Name = c.Name
+                }).ToList()
+            };
+            return Ok(new ResponseObject(200, "Query data successfully", blogDTO));
         }
 
         [HttpGet("condition")]

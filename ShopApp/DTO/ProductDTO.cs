@@ -13,5 +13,9 @@
         public string CategoryName { get; set; }
         public string CategorySlug { get; set; }
         public string ProductDescription { get; set; }
+        public List<string> ProductImages { get; set; } = new List<string>();
+        public List<ProductCommentDTO> ProductComments { get; set; } = new List<ProductCommentDTO>();
+        public List<ProductDetailDTO> ProductDetails { get; set; } = new List<ProductDetailDTO>();
+
     }
 }

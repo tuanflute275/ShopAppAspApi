@@ -108,7 +108,12 @@ namespace ShopApp.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Category>> FindById(int id)
         {
-            var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.ProductId == id);
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .Include(x => x.ProductImages)
+                .Include(x => x.ProductComments)
+                .Include(x => x.ProductDetails)
+                .FirstOrDefaultAsync(p => p.ProductId == id);
             if (product == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
@@ -126,7 +131,21 @@ namespace ShopApp.Controllers
                 ProductDescription = product.ProductDescription,
                 CategoryId = product.CategoryId,
                 CategoryName = product.Category.CategoryName,
-                CategorySlug = product.Category.CategorySlug
+                CategorySlug = product.Category.CategorySlug,
+                ProductImages = product.ProductImages.Select(i => i.Path).ToList(),
+                ProductComments = product.ProductComments.Select(c => new ProductCommentDTO
+                {
+                    UserId = c.UserId,
+                    Email = c.Email,
+                    Message = c.Message,
+                    Name = c.Name
+                }).ToList(),
+                ProductDetails = product.ProductDetails.Select(d => new ProductDetailDTO
+                {
+                    Color = d.Color,
+                    Size = d.Size,
+                    Quantity = d.Quantity,
+                }).ToList()
             };
             return Ok(new ResponseObject(200, "Query data successfully", productDTO));
         }
@@ -134,7 +153,12 @@ namespace ShopApp.Controllers
         [HttpGet("{slug}")]
         public async Task<ActionResult<Product>> FindBySlug(string slug)
         {
-            var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.ProductSlug == slug);
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .Include(x => x.ProductImages)
+                .Include(x => x.ProductComments)
+                .Include(x => x.ProductDetails)
+                .FirstOrDefaultAsync(p => p.ProductSlug == slug);
             if (product == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with slug {slug}", null));
@@ -152,7 +176,21 @@ namespace ShopApp.Controllers
                 ProductDescription = product.ProductDescription,
                 CategoryId = product.CategoryId,
                 CategoryName = product.Category.CategoryName,
-                CategorySlug = product.Category.CategorySlug
+                CategorySlug = product.Category.CategorySlug,
+                ProductImages = product.ProductImages.Select(i => i.Path).ToList(),
+                ProductComments = product.ProductComments.Select(c => new ProductCommentDTO
+                {
+                    UserId = c.UserId,
+                    Email = c.Email,
+                    Message = c.Message,
+                    Name = c.Name
+                }).ToList(),
+                ProductDetails = product.ProductDetails.Select(d => new ProductDetailDTO
+                {
+                    Color = d.Color,
+                    Size = d.Size,
+                    Quantity = d.Quantity,
+                }).ToList()
             };
             return Ok(new ResponseObject(200, "Query data successfully", productDTO));
         }

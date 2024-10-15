@@ -80,7 +80,7 @@ namespace ShopApp.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return Ok(new ResponseObject(200, "Insert data successfully",count, model));
+                return Ok(new ResponseObjectTotal(200, "Insert data successfully",count, model));
             }
             catch (Exception ex)
             {

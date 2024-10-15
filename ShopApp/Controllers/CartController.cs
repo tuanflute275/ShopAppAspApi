@@ -45,7 +45,7 @@ namespace ShopApp.Controllers
                 total.Quantity += item.Quantity;
                 total.Amount += (double)item.TotalAmount;
             }
-            return Ok(new ResponseObject(200, "Query data successfully", total, listCartDTO));
+            return Ok(new ResponseObjectTotal(200, "Query data successfully", total, listCartDTO));
         }
 
         [HttpGet("{userId}")]
@@ -78,7 +78,7 @@ namespace ShopApp.Controllers
                 total.Quantity += item.Quantity;
                 total.Amount += (double)item.TotalAmount;
             }
-            return Ok(new ResponseObject(200, "Query data successfully", total, listCartDTO));
+            return Ok(new ResponseObjectTotal(200, "Query data successfully", total, listCartDTO));
         }
 
         [HttpPost]
