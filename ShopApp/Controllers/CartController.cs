@@ -16,7 +16,7 @@ namespace ShopApp.Controllers
         public CartController(ApplicationDbContext context) { _context = context; }
 
         [HttpGet]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> FindAll()
         {
             var carts = await _context.Carts.Include(x => x.User).Include(x => x.Product).ToListAsync();
             var listCartDTO = carts.Select(c => new CartDTO

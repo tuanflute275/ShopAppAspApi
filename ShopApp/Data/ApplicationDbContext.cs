@@ -27,6 +27,9 @@ namespace ShopApp.Data
         public DbSet<BlogComment> BlogComments { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductComment> ProductComments { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<ProductDetail> ProductDetails { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }

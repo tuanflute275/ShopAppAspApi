@@ -25,4 +25,10 @@
     <PackageReference Include="X.PagedList.Mvc.Core" Version="10.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\blogs\" />
+    <Folder Include="wwwroot\uploads\products\" />
+    <Folder Include="wwwroot\uploads\users\" />
+  </ItemGroup>
+
 </Project>

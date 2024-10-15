@@ -130,7 +130,7 @@ namespace ShopApp.Controllers
                     string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.UserPassword, 12);
                     user.UserName = model.UserName;
                     user.UserFullName = model.UserName;
-                    user.UserEmail = model.UserName;
+                    user.UserEmail = model.UserEmail;
                     user.UserPassword = passwordHash;
                     user.UserPhoneNumber = model.UserName;
                     user.UserAddress = model.UserName;
@@ -259,7 +259,7 @@ namespace ShopApp.Controllers
             try
             {
                 _context.Users.Remove(user);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return Ok(new ResponseObject(200, "Delete data successfully"));
             }
             catch (Exception ex)

@@ -9,7 +9,6 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
-    //[Authorize]
     [ApiController]
     [Route("/api/coupon")]
     public class CouponController : Controller
@@ -150,7 +149,6 @@ namespace ShopApp.Controllers
             return discount;
         }
 
-
         [HttpPost]
         public async Task<ActionResult<Coupon>> Save(Coupon coupon)
         {
@@ -204,9 +202,15 @@ namespace ShopApp.Controllers
         public async Task<ActionResult<Coupon>> Delete(int id)
         {
             var coupon = await _context.Coupons.FindAsync(id);
+            var couponConditions = await _context.CouponConditions.Where(x => x.CouponId == id).ToListAsync();
             if (coupon == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
+            }
+            if(couponConditions != null && couponConditions.Count > 0)
+            {
+                _context.CouponConditions.RemoveRange(couponConditions);
+                await _context.SaveChangesAsync();
             }
             try
             {

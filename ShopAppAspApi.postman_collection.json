@@ -1,0 +1,2359 @@
+{
+	"info": {
+		"_postman_id": "e4a15768-0189-4a67-ac6b-f333dc5c2218",
+		"name": "ShopAppAspApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26365987"
+	},
+	"item": [
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/category",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"category"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "demo",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Id-DESC",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/category/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/category/10",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"category",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/category/slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/category/demo-1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"category",
+								"demo-1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"categoryName\": \"categoryName\",\r\n  \"categoryStatus\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/category",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/category/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"categoryName\": \"categoryUpdate\",\r\n  \"categoryStatus\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/category/16",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"category",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/category/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/category/15",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"category",
+								"15"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/auth/login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"tuanflute27052004@gmail.com\",\r\n  \"password\": \"111111\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/auth/login",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/auth/register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"demoEmail2\",\r\n  \"fullName\": \"demoEmail\",\r\n  \"email\": \"tuanflute27052004@gmail.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/auth/register",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/auth/forgotPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userEmail\": \"tuanflute27052004@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/auth/forgotPassword",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"auth",
+								"forgotPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/auth/changePassword/userId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"oldPassword\": \"1234567\",\r\n  \"newPassword\": \"111111\",\r\n  \"confirmPassword\": \"111111\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/auth/changePassword/15",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"auth",
+								"changePassword",
+								"15"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/user",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/user/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/user/3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"user",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "UserName",
+									"value": "test23",
+									"type": "text"
+								},
+								{
+									"key": "UserFullName",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "ImageFile",
+									"type": "file",
+									"src": "/D:/Pictures/shopapp-fashion/product/pr8.jpg"
+								},
+								{
+									"key": "OldImage",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "UserEmail",
+									"value": "test@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "UserPassword",
+									"value": "111111",
+									"type": "text"
+								},
+								{
+									"key": "UserPhoneNumber",
+									"value": "123456789",
+									"type": "text"
+								},
+								{
+									"key": "UserAddress",
+									"value": "hn",
+									"type": "text"
+								},
+								{
+									"key": "UserGender",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "UserActive",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "Role",
+									"value": "User",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/user",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "UserName",
+									"value": "tfl",
+									"type": "text"
+								},
+								{
+									"key": "UserFullName",
+									"value": "tfl",
+									"type": "text"
+								},
+								{
+									"key": "ImageFile",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "OldImage",
+									"value": "http://localhost:5157/uploads/users/avatar.jpg",
+									"type": "text"
+								},
+								{
+									"key": "UserEmail",
+									"value": "tuanflute27052004@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "UserPassword",
+									"value": "111111",
+									"type": "text"
+								},
+								{
+									"key": "UserPhoneNumber",
+									"value": "123456789",
+									"type": "text"
+								},
+								{
+									"key": "UserAddress",
+									"value": "hn",
+									"type": "text"
+								},
+								{
+									"key": "UserGender",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "UserActive",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "Role",
+									"value": "User",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/user/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/user/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/user/16",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"user",
+								"16"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/role",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/role/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/role/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"role",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"roleName\": \"Tesst\",\r\n  \"roleDesc\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/role",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/role/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"roleName\": \"Tesst1\",\r\n  \"roleDesc\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/role/4",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"role",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/role/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/role/4",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"role",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Coupon",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/coupon",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/coupon?page=2",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"coupon"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "2010",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Id-DESC",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Name-ASC",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/coupon/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/coupon/2",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"coupon",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/coupon/code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/coupon/PHUNU",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"coupon",
+								"PHUNU"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/coupon/caculateValue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/coupon/caculateValue?couponCode=PHUNU&totalAmount=120000",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"coupon",
+								"caculateValue"
+							],
+							"query": [
+								{
+									"key": "couponCode",
+									"value": "PHUNU"
+								},
+								{
+									"key": "totalAmount",
+									"value": "120000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/coupon",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"WOMEN2010\",\r\n  \"percent\": 100,\r\n  \"description\": \"2010 WOMEN DESC\",\r\n  \"active\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/coupon",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"coupon"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/coupon/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"test\",\r\n  \"percent\": 100,\r\n  \"description\": \"tesst\",\r\n  \"active\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/coupon/4",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"coupon",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/coupon/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/coupon/5",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"coupon",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CouponCondition",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/couponCondition",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/couponCondition",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"couponCondition"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/couponCondition/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/couponCondition/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"couponCondition",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/couponCondition",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"couponId\": 1,\r\n  \"attribute\": \"minimum_amount\",\r\n  \"operator\": \">\",\r\n  \"value\": \"20000\",\r\n  \"discountAmount\": 10000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/couponCondition",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"couponCondition"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/couponCondition/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"couponId\": 5,\r\n  \"attribute\": \"minimum_amount\",\r\n  \"operator\": \">\",\r\n  \"value\": \"20000\",\r\n  \"discountAmount\": 20000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/couponCondition/7",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"couponCondition",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/couponCondition/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/couponCondition/9",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"couponCondition",
+								"9"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/cart",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/cart/userId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/cart/3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"cart",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 2,\r\n  \"productId\": 3,\r\n  \"quantity\":4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/cart",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/cart/id/quantity",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/cart/3/3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"cart",
+								"3",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/cart/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/cart/3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"cart",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1IiwiZW1haWwiOiJkZW1vQGdtYWlsLmNvbSIsInJvbGUiOiJBZG1pbiIsIm5iZiI6MTcyODk2NDY2NSwiZXhwIjoxNzI4OTY4MjY1LCJpYXQiOjE3Mjg5NjQ2NjUsImlzcyI6InR1YW5mbHV0ZTI3NS5zaXRlIiwiYXVkIjoidHVhbmZsdXRlIn0.DpEy5zL3-oFabzz7z7YBHfCvcUq6rz_nDIYYT2OKdtU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/order",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/order/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/order/6",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwiZW1haWwiOiJ0dWFuZmx1dGUyNzA1MjAwNEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsIm5iZiI6MTcyODk4MzEwNSwiZXhwIjoxNzI4OTg2NzA1LCJpYXQiOjE3Mjg5ODMxMDUsImlzcyI6InR1YW5mbHV0ZTI3NS5zaXRlIiwiYXVkIjoidHVhbmZsdXRlIn0.1vldC6XtAqKIAaK3TUS2erVTnYWIOgM2FJwxL2PjzmQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"orderFullName\": \"demo\",\r\n  \"orderAddress\": \"hn\",\r\n  \"orderPhoneNumber\": \"123456789\",\r\n  \"orderEmail\": \"tuanflute27052004@gmail.com\",\r\n  \"orderPaymentMethods\": \"ok\",\r\n  \"orderStatusPayment\": \"ok\",\r\n  \"orderAmount\": 123000,\r\n  \"orderNote\": \"ok\",\r\n  \"userId\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/order",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/order/id/status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/order/8/4",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order",
+								"8",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/order/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/order/12",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"order",
+								"12"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/product",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "demo",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Id-DESC",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/product/3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product/slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/product/test-slug",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product",
+								"test-slug"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product/category/slug-category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/product/category/demo-3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product",
+								"category",
+								"demo-3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product/new",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/product/new?limit=3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product",
+								"new"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product/sale",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/product/sale?limit=3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product",
+								"sale"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product/related",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/product/related/test-slug?limit=3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product",
+								"related",
+								"test-slug"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "ProductName",
+									"value": "aaaaaa",
+									"type": "text"
+								},
+								{
+									"key": "ImageFile",
+									"type": "file",
+									"src": "/D:/Pictures/shopapp-fashion/product/product1.jpg"
+								},
+								{
+									"key": "OldImage",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "ProductPrice",
+									"value": "120000",
+									"type": "text"
+								},
+								{
+									"key": "ProductSalePrice",
+									"value": "99000",
+									"type": "text"
+								},
+								{
+									"key": "ProductStatus",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "CategoryId",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "ProductDescription",
+									"value": "desc",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/product",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "ProductName",
+									"value": "name update",
+									"type": "text"
+								},
+								{
+									"key": "ImageFile",
+									"type": "file",
+									"src": "/D:/Pictures/shopapp-fashion/product/product7.jpg"
+								},
+								{
+									"key": "OldImage",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "ProductPrice",
+									"value": "50000",
+									"type": "text"
+								},
+								{
+									"key": "ProductSalePrice",
+									"value": "45000",
+									"type": "text"
+								},
+								{
+									"key": "ProductStatus",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "CategoryId",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "ProductDescription",
+									"value": "desc update",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/product/9",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/product/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/product/10",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"product",
+								"10"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ProductDetail",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/productDetail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productDetail",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productDetail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productDetail/productId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productDetail/12",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productDetail",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productDetail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"color\": \"red\",\r\n  \"size\": \"L\",\r\n  \"quantity\": 120,\r\n  \"productId\": 12\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/productDetail",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productDetail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productDetail/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"color\": \"green\",\r\n  \"size\": \"XXL\",\r\n  \"quantity\": 50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/productDetail/3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productDetail",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productDetail/id/quantity",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"color\": \"green\",\r\n  \"size\": \"XXL\",\r\n  \"quantity\": 50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/productDetail/3/50",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productDetail",
+								"3",
+								"50"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productDetail/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productDetail/3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productDetail",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ProductImage",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/productImage",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productImage",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productImage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productImage/productId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productImage/9",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productImage",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productImage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "ProductId",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "ImageFiles",
+									"type": "file",
+									"src": [
+										"/D:/Pictures/shopapp-fashion/product/pr1.jpg",
+										"/D:/Pictures/shopapp-fashion/product/pr2.jpg",
+										"/D:/Pictures/shopapp-fashion/product/pr3.jpg",
+										"/D:/Pictures/shopapp-fashion/product/pr4.jpg",
+										"/D:/Pictures/shopapp-fashion/product/pr5.jpg"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/productImage",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productImage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productImage/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productImage/17",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productImage",
+								"17"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ProductComment",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/productComment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productComment?sort=Date-DESC&page=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productComment"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "tesst",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Id-DESC",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Name-ASC",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Date-DESC"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productComment/productId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productComment/12",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productComment",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productComment/userId/productId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productComment/3/12",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productComment",
+								"3",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productComment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"name\": \"user example\",\r\n  \"message\": \"ohhhh\",\r\n  \"userId\": 1,\r\n  \"idPost\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/productComment",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productComment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productComment/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"name\": \"string\",\r\n  \"message\": \"ok\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/productComment/4",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productComment",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/productComment/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/productComment/4",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"productComment",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blog?page=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blog"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "test",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Id-DESC",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Name-ASC",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blog/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blog/8",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blog",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blog/slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blog/title-update",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blog",
+								"title-update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blog/condition",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blog/condition?sort=Id-DESC&limit=5",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blog",
+								"condition"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "Id-DESC"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blog",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "BlogTitle",
+									"value": "title add 1",
+									"type": "text"
+								},
+								{
+									"key": "ImageFile",
+									"type": "file",
+									"src": "/D:/Pictures/shopapp-fashion/product/pr9.jpg"
+								},
+								{
+									"key": "OldImage",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "BlogDescription",
+									"value": "desc add",
+									"type": "text"
+								},
+								{
+									"key": "UserId",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/blog",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blog"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blog/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "BlogTitle",
+									"value": "title update",
+									"type": "text"
+								},
+								{
+									"key": "ImageFile",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "OldImage",
+									"value": "http://localhost:5157/uploads/blogs/product2.jpg",
+									"type": "text"
+								},
+								{
+									"key": "BlogDescription",
+									"value": "desc update",
+									"type": "text"
+								},
+								{
+									"key": "UserId",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/blog/8",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blog",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blog/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blog/9",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blog",
+								"9"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "BlogComment",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/blogComment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blogComment?sort=Date-DESC&page=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blogComment"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "demo",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Id-DESC",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Name-ASC",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Date-DESC"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blogComment/blogId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blogComment/8",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blogComment",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blogComment/userId/blogId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blogComment/3/8",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blogComment",
+								"3",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blogComment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"name\": \"demo\",\r\n  \"message\": \"ok2\",\r\n  \"userId\": 3,\r\n  \"idPost\": 9\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/blogComment",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blogComment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blogComment Copy",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"name\": \"demo\",\r\n  \"message\": \"okk\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/blogComment/9",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blogComment",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/blogComment/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/blogComment/9",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"blogComment",
+								"9"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Log",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/log",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/log",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"log"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/log/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/log/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"log",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/log/logUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/log/logUser",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"log",
+								"logUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/log/logFunction",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/log/logFunction",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"log",
+								"logFunction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/log/saveUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"tuanflute275\",\r\n  \"workTation\": \"DESkTOP275\",\r\n  \"request\": \"/login\",\r\n  \"response\": \"data response\",\r\n  \"ipAdress\": \"127.0.0.1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/log/saveUser",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"log",
+								"saveUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/log/saveFunction",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"tuanflute275\",\r\n  \"workTation\": \"DESkTOP275\",\r\n  \"request\": \"/category\",\r\n  \"response\": \"data response\",\r\n  \"ipAdress\": \"127.0.0.1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/log/saveFunction",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"log",
+								"saveFunction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/log/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/log/6",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"log",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

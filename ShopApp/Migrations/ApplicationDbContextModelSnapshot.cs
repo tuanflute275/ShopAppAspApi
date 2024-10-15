@@ -431,6 +431,127 @@ namespace ShopApp.Migrations
                     b.ToTable("Product");
                 });
 
+            modelBuilder.Entity("ShopApp.Models.Entities.ProductComment", b =>
+                {
+                    b.Property<int>("ProductCommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ProductCommentId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductCommentId"));
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreateDate");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("Email");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("ntext")
+                        .HasColumnName("Message");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("Name");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductId");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdateDate");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("ProductCommentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProductComment");
+                });
+
+            modelBuilder.Entity("ShopApp.Models.Entities.ProductDetail", b =>
+                {
+                    b.Property<int>("ProductDetailId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ProductDetailId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductDetailId"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreateDate");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductId");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdateDate");
+
+                    b.HasKey("ProductDetailId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductDetail");
+                });
+
+            modelBuilder.Entity("ShopApp.Models.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("ProductImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ProductImageId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductImageId"));
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreateDate");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("Path");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductId");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdateDate");
+
+                    b.HasKey("ProductImageId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImage");
+                });
+
             modelBuilder.Entity("ShopApp.Models.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -649,6 +770,47 @@ namespace ShopApp.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("ShopApp.Models.Entities.ProductComment", b =>
+                {
+                    b.HasOne("ShopApp.Models.Entities.Product", "Product")
+                        .WithMany("ProductComment")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ShopApp.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ShopApp.Models.Entities.ProductDetail", b =>
+                {
+                    b.HasOne("ShopApp.Models.Entities.Product", "Product")
+                        .WithMany("ProductDetail")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ShopApp.Models.Entities.ProductImage", b =>
+                {
+                    b.HasOne("ShopApp.Models.Entities.Product", "Product")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("ShopApp.Models.Entities.Role", b =>
                 {
                     b.HasOne("ShopApp.Models.Entities.User", null)
@@ -698,6 +860,12 @@ namespace ShopApp.Migrations
             modelBuilder.Entity("ShopApp.Models.Entities.Product", b =>
                 {
                     b.Navigation("Carts");
+
+                    b.Navigation("ProductComment");
+
+                    b.Navigation("ProductDetail");
+
+                    b.Navigation("ProductImages");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.Role", b =>

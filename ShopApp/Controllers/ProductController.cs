@@ -377,15 +377,55 @@ namespace ShopApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> Delete(int id)
         {
-            var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.ProductId == id);
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "products");
+            var product = await _context.Products.FindAsync(id);
+            var productCmts = await _context.ProductComments.Where(x => x.ProductId == id).ToListAsync();
+            var productDetails = await _context.ProductDetails.Where(x => x.ProductId == id).ToListAsync();
+            var productImages = await _context.ProductImages.Where(x => x.ProductId == id).ToListAsync();
+            var orderDetails = await _context.OrderDetails.Where(x => x.ProductId == id).ToListAsync();
             if (product == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
             }
+            if (orderDetails != null && orderDetails.Count > 0) 
+            {
+                _context.OrderDetails.RemoveRange(orderDetails);
+                await _context.SaveChangesAsync();
+            }
+            if (productCmts != null && productCmts.Count > 0)
+            {
+                _context.ProductComments.RemoveRange(productCmts);
+                await _context.SaveChangesAsync();
+            }
+            if (productDetails != null && productDetails.Count > 0)
+            {
+                _context.ProductDetails.RemoveRange(productDetails);
+                await _context.SaveChangesAsync();
+            }
+            if (productImages != null && productImages.Count > 0)
+            {
+                foreach (var item in productImages)
+                {
+                    var oldFileName = item.Path;
+                    var oldFilePath = Path.Combine(uploadsFolder, oldFileName);
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+                _context.ProductImages.RemoveRange(productImages);
+                await _context.SaveChangesAsync();
+            }
             try
             {
+                var oldFileName = product.ProductImage;
+                var oldFilePath = Path.Combine(uploadsFolder, oldFileName);
+                if (System.IO.File.Exists(oldFilePath))
+                {
+                    System.IO.File.Delete(oldFilePath);
+                }
                 _context.Products.Remove(product);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return Ok(new ResponseObject(200, "Delete data successfully"));
             }
             catch (Exception ex)

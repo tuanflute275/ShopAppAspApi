@@ -106,7 +106,7 @@ namespace ShopApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<CouponCondition>> Delete(int id)
         {
-            var couponCondition = await _context.CouponConditions.FindAsync(id);
+            var couponCondition = await _context.CouponConditions.Include(x => x.Coupon).FirstOrDefaultAsync(x => x.CouponConditionId == id);
             if (couponCondition == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));

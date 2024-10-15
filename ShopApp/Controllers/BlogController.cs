@@ -240,9 +240,15 @@ namespace ShopApp.Controllers
         public async Task<ActionResult<Blog>> Delete(int id)
         {
             var blog = await _context.Blogs.Include(p => p.User).FirstOrDefaultAsync(p => p.BlogId == id);
+            var blogCmts = await _context.BlogComments.Where(x => x.BlogId == id).ToListAsync();
             if (blog == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
+            }
+            if(blogCmts != null && blogCmts.Count > 0)
+            {
+                _context.BlogComments.RemoveRange(blogCmts);
+                await _context.SaveChangesAsync();  
             }
             try
             {

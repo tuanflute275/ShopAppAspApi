@@ -29,68 +29,63 @@ namespace ShopApp.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginModel model)
         {
+            var checkUser = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == model.Email);
+            //select user role get roleName
+            var userWithRole = await (from ur in _context.UserRoles
+                                      join u in _context.Users on ur.UserId equals u.Id
+                                      join r in _context.Roles on ur.RoleId equals r.Id
+                                      where ur.UserId == 2
+                                      select new
+                                      {
+                                          UserId = u.Id,
+                                          UserEmail = u.UserEmail,
+                                          RoleName = r.RoleName
+                                      }).FirstOrDefaultAsync();
             if (model == null)
             {
                 return BadRequest(new ResponseObject(400, "Invalid request."));
             }
+            if (checkUser == null)
+            {
+                return BadRequest(new ResponseObject(400, "Account does not exist."));
+            }
+
+            if (model.Password.Length < 6)
+            {
+                return BadRequest(new ResponseObject(400, "Password must be longer than 6 characters."));
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(model.Password, checkUser.UserPassword))
+            {
+                return BadRequest(new ResponseObject(400, "Incorrect password."));
+            }
+            if (userWithRole == null)
+            {
+                return Ok(new ResponseObject(400, "You do not have access."));
+            }
             try
             {
-                var checkUser = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == model.Email);
-
-                if (checkUser == null)
+                // Tạo token JWT
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_configuration["Jwt:key"]);
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    return BadRequest(new ResponseObject(400, "Account does not exist."));
-                }
-
-                if (model.Password.Length < 6)
-                {
-                    return BadRequest(new ResponseObject(400, "Password must be longer than 6 characters."));
-                }
-
-                if (!BCrypt.Net.BCrypt.Verify(model.Password, checkUser.UserPassword))
-                {
-                    return BadRequest(new ResponseObject(400, "Incorrect password."));
-                }
-
-                //select user role get roleName
-                var userWithRole = await (from ur in _context.UserRoles
-                                          join u in _context.Users on ur.UserId equals u.Id
-                                          join r in _context.Roles on ur.RoleId equals r.Id
-                                          where ur.UserId == 2
-                                          select new
-                                          {
-                                              UserId = u.Id,
-                                              UserEmail = u.UserEmail,
-                                              RoleName = r.RoleName
-                                          }).FirstOrDefaultAsync();
-                if (userWithRole != null)
-                {
-                    // Tạo token JWT
-                    var tokenHandler = new JwtSecurityTokenHandler();
-                    var key = Encoding.ASCII.GetBytes(_configuration["Jwt:key"]);
-                    var tokenDescriptor = new SecurityTokenDescriptor
+                    Subject = new ClaimsIdentity(new Claim[]
                     {
-                        Subject = new ClaimsIdentity(new Claim[]
-                        {
                         new Claim(ClaimTypes.NameIdentifier, checkUser.Id.ToString()),
                         new Claim(ClaimTypes.Email, checkUser.UserEmail),
                         new Claim(ClaimTypes.Role, userWithRole.RoleName)
 
-                        }),
-                        Expires = DateTime.UtcNow.AddHours(1),
-                        Issuer = _configuration["Jwt:Issuer"],
-                        Audience = _configuration["Jwt:Audience"],
-                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                    };
-                    var token = tokenHandler.CreateToken(tokenDescriptor);
-                    var tokenString = tokenHandler.WriteToken(token);
+                    }),
+                    Expires = DateTime.UtcNow.AddHours(1),
+                    Issuer = _configuration["Jwt:Issuer"],
+                    Audience = _configuration["Jwt:Audience"],
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
 
-                    return Ok(new ResponseObject(200, "Login successfully.", new { Token = tokenString }));
-                }
-                else
-                {
-                    return Ok(new ResponseObject(400, "You do not have access."));
-                }
+                return Ok(new ResponseObject(200, "Login successfully.", new { Token = tokenString }));
             }
             catch (Exception ex)
             {
@@ -105,11 +100,11 @@ namespace ShopApp.Controllers
             {
                 return BadRequest(new ResponseObject(400, "Invalid request."));
             }
-            if (!AccountEmailExists(model.Email))
+            if (AccountEmailExists(model.Email))
             {
                 return BadRequest(new ResponseObject(400, "Email already taken"));
             }
-            if (!AccountUserNameExists(model.UserName))
+            if (AccountUserNameExists(model.UserName))
             {
                 return BadRequest(new ResponseObject(400, "Username already taken"));
             }

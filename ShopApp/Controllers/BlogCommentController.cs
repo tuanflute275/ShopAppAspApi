@@ -19,7 +19,7 @@ namespace ShopApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<BlogComment>> Index(string? name, string? sort, int page = 1)
+        public async Task<ActionResult<BlogComment>> FindAll(string? name, string? sort, int page = 1)
         {
             var blogCmts = await _context.BlogComments.ToListAsync();
             if (!string.IsNullOrEmpty(name))
@@ -84,6 +84,19 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", pageData));
         }
 
+        [HttpGet("{blogId}")]
+        public async Task<ActionResult<BlogComment>> FindByBlogId(int blogId)
+        {
+            var blogCmt = await _context.BlogComments
+                .Where(x => x.BlogId == blogId)
+                .ToListAsync();
+            if (blogCmt == null)
+            {
+                return NotFound(new ResponseObject(404, $"Cannot find data with blogId {blogId} ", null));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", blogCmt));
+        }
+
         [HttpGet("{userId}/{blogId}")]
         public async Task<ActionResult<BlogComment>> FindById(int userId, int blogId)
         {
@@ -98,7 +111,7 @@ namespace ShopApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BlogComment>> Save(BlogCommentModel model)
+        public async Task<ActionResult<BlogComment>> Save(CommentModel model)
         {
             try
             {
@@ -111,7 +124,7 @@ namespace ShopApp.Controllers
                     CreateDate = DateTime.Now,
                     UpdateDate = null,
                     UserId = model.UserId,
-                    BlogId = model.BlogId
+                    BlogId = model.IdPost
                 };
                 await _context.BlogComments.AddAsync(blogCmt);
                 _context.SaveChanges();
@@ -125,7 +138,7 @@ namespace ShopApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BlogComment>> Update(int id, BlogCommentUpdateModel model)
+        public async Task<ActionResult<BlogComment>> Update(int id, CommentUpdateModel model)
         {
             var blogCmt = await _context.BlogComments.FindAsync(id);
             if (blogCmt != null)

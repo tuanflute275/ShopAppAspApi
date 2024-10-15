@@ -19,7 +19,7 @@ namespace ShopApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Log>> Index(string? username, string? sort, int page = 1)
+        public async Task<ActionResult<Log>> FindAll(string? username, string? sort, int page = 1)
         {
             var logs = await _context.Logs.ToListAsync();
             if (!string.IsNullOrEmpty(username))
@@ -239,29 +239,6 @@ namespace ShopApp.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Log>> Update(int id, LogModel model)
-        {
-            var log = await _context.Logs.FindAsync(id);
-            if (log != null)
-            {
-                try
-                {
-                    log.TimeLogout = DateTime.Now;
-                    _context.SaveChanges();
-                    return Ok(new ResponseObject(200, "Update data successfully", log));
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, new ResponseObject(500, "Internal server error. Please try again later."));
-                }
-            }
-            else
-            {
-                return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
             }
         }
 

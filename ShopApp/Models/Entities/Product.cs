@@ -40,7 +40,10 @@ namespace ShopApp.Models.Entities
 
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+        public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+        public virtual ICollection<ProductDetail> ProductDetails { get; set; } = new List<ProductDetail>();
+        public virtual ICollection<ProductComment> ProductComments { get; set; } = new List<ProductComment>();
     }
 }

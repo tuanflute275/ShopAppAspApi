@@ -13,14 +13,14 @@ namespace ShopApp.Controllers
 {
     [ApiController]
     [Route("api/order")]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles ="User")]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
         public OrderController(ApplicationDbContext context) {_context = context; }
 
         [HttpGet]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> FindAll()
         {
             var orders = await _context.Orders.Include(x => x.OrderDetails).Include(x => x.User).Include(x => x.Coupon).ToListAsync();
             return Ok(orders);
