@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.Models.Entities;
@@ -21,7 +22,7 @@ namespace ShopApp.Controllers
         [HttpGet]
         public async Task<ActionResult<CouponCondition>> FindAll(string? sort, int page = 1)
         {
-            var couponConditions = await _context.CouponConditions.Include(x => x.Coupon).ToListAsync();
+            var couponConditions = await _context.CouponConditions.ToListAsync();
             if (!string.IsNullOrEmpty(sort))
             {
                 switch (sort)
@@ -44,7 +45,7 @@ namespace ShopApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CouponCondition>> FindById(int id)
         {
-            var couponCondition = await _context.CouponConditions.Include(x => x.Coupon).FirstOrDefaultAsync(x => x.CouponConditionId == id);
+            var couponCondition = await _context.CouponConditions.FirstOrDefaultAsync(x => x.CouponConditionId == id);
             if (couponCondition == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
@@ -52,6 +53,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", couponCondition));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<CouponCondition>> Save(CouponConditionModel model)
         {
@@ -76,6 +78,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<CouponCondition>> Update(int id, CouponConditionModel model)
         {
@@ -103,6 +106,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<CouponCondition>> Delete(int id)
         {

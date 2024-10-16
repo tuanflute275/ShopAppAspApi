@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.Models.Entities;
@@ -97,6 +98,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", blogCmt));
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpGet("{userId}/{blogId}")]
         public async Task<ActionResult<BlogComment>> FindById(int userId, int blogId)
         {
@@ -110,6 +112,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", blogCmt));
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<ActionResult<BlogComment>> Save(CommentModel model)
         {
@@ -137,6 +140,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpPut("{id}")]
         public async Task<ActionResult<BlogComment>> Update(int id, CommentUpdateModel model)
         {
@@ -163,6 +167,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<BlogComment>> Delete(int id)
         {

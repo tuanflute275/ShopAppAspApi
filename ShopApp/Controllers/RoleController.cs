@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.Models.Entities;
@@ -8,6 +9,7 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("/api/role")]
     public class RoleController : Controller

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.DTO;
@@ -294,6 +295,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", productDTOs));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Product>> Save([FromForm] ProductModel model)
         {
@@ -353,6 +355,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<Product>> Update(int id, [FromForm] ProductModel model)
         {
@@ -412,6 +415,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> Delete(int id)
         {

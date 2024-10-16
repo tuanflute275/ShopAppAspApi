@@ -13,30 +13,171 @@ namespace ShopApp.Controllers
 {
     [ApiController]
     [Route("api/order")]
-    [Authorize(Roles ="User")]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
         public OrderController(ApplicationDbContext context) {_context = context; }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> FindAll()
         {
-            var orders = await _context.Orders.Include(x => x.OrderDetails).Include(x => x.User).Include(x => x.Coupon).ToListAsync();
+            var orders = await _context.Orders.ToListAsync();
             return Ok(orders);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet("{id}")]
         public async Task<ActionResult> FingById(int id)
         {
-            var order = await _context.Orders.Include(x => x.OrderDetails).Include(x => x.User).Include(x => x.Coupon).FirstOrDefaultAsync(x => x.OrderId == id);
+            var order = await _context.Orders
+                .Include(x => x.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .ThenInclude(p => p.Category)
+                .Include(x => x.User)
+                .Include(x => x.CouponOrders)
+                .ThenInclude(co => co.Coupon)
+                .ThenInclude(c => c.CouponConditions)
+                .FirstOrDefaultAsync(x => x.OrderId == id);
             if (order == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
             }
-            return Ok(new ResponseObject(200, "Query data successfully", order));
+            var orderDTO = new OrderDTO
+            {
+                OrderId = order.OrderId,
+                OrderFullName = order.OrderFullName,
+                OrderAddress = order.OrderAddress,
+                OrderPhoneNumber = order.OrderPhoneNumber,
+                OrderEmail = order.OrderEmail,
+                OrderDate = order.OrderDate,
+                OrderPaymentMethods = order.OrderPaymentMethods,
+                OrderStatusPayment = order.OrderStatusPayment,
+                OrderStatus = order.OrderStatus,    
+                OrderQuantity = order.OrderQuantity,
+                OrderAmount = order.OrderAmount,
+                OrderNote = order.OrderNote,
+                User = new UserDTO
+                {
+                    Id = order.User.Id,
+                    UserName = order.User.UserName,
+                    UserFullName = order.User.UserName,
+                    UserAvatar = order.User.UserAvatar,
+                    UserEmail = order.User.UserEmail,
+                    UserPhoneNumber = order.User.UserPhoneNumber,
+                    UserAddress = order.User.UserAddress,
+                    UserGender = order.User.UserGender,
+                },
+                Coupons = order.CouponOrders.Select(co => new CouponDTO
+                {
+                    CouponId = co.Coupon.CouponId,
+                    Percent = co.Coupon.Percent,
+                    Code = co.Coupon.Code,
+                    Active = co.Coupon.Active,
+                    Description = co.Coupon.Description,
+                    CouponConditions = co.Coupon.CouponConditions.Select(cc => new CouponConditionDTO
+                    {
+                        CouponConditionId = cc.CouponConditionId,
+                        Attribute = cc.Attribute,
+                        Operator = cc.Operator,
+                        Value = cc.Value,
+                        DiscountAmount = cc.DiscountAmount,
+                    }).ToList()
+                }).ToList(),
+                OrderDetails = order.OrderDetails.Select(od => new OrderDetailDTO
+                {
+                    OrderDetailId = od.OrderId,
+                    ProductName = od.Product.ProductName,
+                    ProductSlug = od.Product.ProductSlug,
+                    ProductImage = od.Product.ProductImage,
+                    ProductPrice = od.Product.ProductPrice,
+                    ProductSalePrice = od.Product.ProductSalePrice,
+                    CategoryName = od.Product.Category.CategoryName,
+                    ProductStatus = od.Product.ProductStatus,
+                    Quantity = od.Quantity,
+                    TotalMoney = od.TotalMoney,
+
+                }).ToList()
+
+            };
+            return Ok(new ResponseObject(200, "Query data successfully", orderDTO));
         }
 
+        [Authorize(Roles = "User")]
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult> FingByUserId(int userId)
+        {
+            var orders = await _context.Orders
+                .Include(x => x.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .ThenInclude(p => p.Category)
+                .Include(x => x.User)
+                .Include(x => x.CouponOrders)
+                .ThenInclude(co => co.Coupon)
+                .ThenInclude(c => c.CouponConditions)
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
+            var orderDTOs = orders.Select(order => new OrderDTO
+            {
+                OrderId = order.OrderId,
+                OrderFullName = order.OrderFullName,
+                OrderAddress = order.OrderAddress,
+                OrderPhoneNumber = order.OrderPhoneNumber,
+                OrderEmail = order.OrderEmail,
+                OrderDate = order.OrderDate,
+                OrderPaymentMethods = order.OrderPaymentMethods,
+                OrderStatusPayment = order.OrderStatusPayment,
+                OrderStatus = order.OrderStatus,
+                OrderQuantity = order.OrderQuantity,
+                OrderAmount = order.OrderAmount,
+                OrderNote = order.OrderNote,
+                User = new UserDTO
+                {
+                    Id = order.User.Id,
+                    UserName = order.User.UserName,
+                    UserFullName = order.User.UserName,
+                    UserAvatar = order.User.UserAvatar,
+                    UserEmail = order.User.UserEmail,
+                    UserPhoneNumber = order.User.UserPhoneNumber,
+                    UserAddress = order.User.UserAddress,
+                    UserGender = order.User.UserGender,
+                },
+                Coupons = order.CouponOrders.Select(co => new CouponDTO
+                {
+                    CouponId = co.Coupon.CouponId,
+                    Percent = co.Coupon.Percent,
+                    Code = co.Coupon.Code,
+                    Active = co.Coupon.Active,
+                    Description = co.Coupon.Description,
+                    CouponConditions = co.Coupon.CouponConditions.Select(cc => new CouponConditionDTO
+                    {
+                        CouponConditionId = cc.CouponConditionId,
+                        Attribute = cc.Attribute,
+                        Operator = cc.Operator,
+                        Value = cc.Value,
+                        DiscountAmount = cc.DiscountAmount,
+                    }).ToList()
+                }).ToList(),
+                OrderDetails = order.OrderDetails.Select(od => new OrderDetailDTO
+                {
+                    OrderDetailId = od.OrderId,
+                    ProductName = od.Product.ProductName,
+                    ProductSlug = od.Product.ProductSlug,
+                    ProductImage = od.Product.ProductImage,
+                    ProductPrice = od.Product.ProductPrice,
+                    ProductSalePrice = od.Product.ProductSalePrice,
+                    CategoryName = od.Product.Category.CategoryName,
+                    ProductStatus = od.Product.ProductStatus,
+                    Quantity = od.Quantity,
+                    TotalMoney = od.TotalMoney,
+
+                }).ToList()
+
+            });
+            return Ok(new ResponseObject(200, "Query data successfully", orderDTOs));
+        }
+
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<ActionResult> SaveOrder(OrderModel model)
         {
@@ -121,6 +262,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpPut("{id}/{status}")]
         public async Task<ActionResult<Order>> UpdateStatus(int id, int status)
         {
@@ -144,6 +286,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Order>> Delete(int id)
         {

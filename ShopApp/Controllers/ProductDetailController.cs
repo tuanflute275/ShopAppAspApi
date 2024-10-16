@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.Models.Entities;
@@ -7,6 +8,7 @@ using ShopApp.Utils;
 
 namespace ShopApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/productDetail")]
     public class ProductDetailController : Controller
@@ -34,6 +36,7 @@ namespace ShopApp.Controllers
             }
             return Ok(new ResponseObject(200, "Query data successfully", productDetails));
         }
+
         [HttpPost]
         public async Task<ActionResult> Save(ProductDetailModel model)
         {

@@ -75,7 +75,7 @@ namespace ShopApp.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Coupon>> FindById(int id)
         {
-            var coupon = await _context.Coupons.FindAsync(id);
+            var coupon = await _context.Coupons.Include(x => x.CouponConditions).FirstOrDefaultAsync(x => x.CouponId == id);
             if (coupon == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
@@ -86,7 +86,7 @@ namespace ShopApp.Controllers
         [HttpGet("{code}")]
         public async Task<ActionResult<Coupon>> FindByCode(string code)
         {
-            var coupon = await _context.Coupons.FirstOrDefaultAsync(x => x.Code == code);
+            var coupon = await _context.Coupons.Include(x => x.CouponConditions).FirstOrDefaultAsync(x => x.Code == code);
             if (coupon == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with code {code}", null));
@@ -149,6 +149,7 @@ namespace ShopApp.Controllers
             return discount;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Coupon>> Save(Coupon coupon)
         {
@@ -172,6 +173,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<Coupon>> Update(int id, Coupon coupon)
         {
@@ -198,6 +200,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Coupon>> Delete(int id)
         {

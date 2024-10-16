@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.DTO;
@@ -15,6 +16,7 @@ namespace ShopApp.Controllers
         private readonly ApplicationDbContext _context;
         public CartController(ApplicationDbContext context) { _context = context; }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> FindAll()
         {
@@ -48,6 +50,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObjectTotal(200, "Query data successfully", total, listCartDTO));
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet("{userId}")]
         public async Task<ActionResult> FindById(int userId)
         {
@@ -81,6 +84,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObjectTotal(200, "Query data successfully", total, listCartDTO));
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<ActionResult<Cart>> Save(CartModel model)
         {
@@ -107,6 +111,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "User")]
         [HttpPut("{id}/{quantity}")]
         public async Task<ActionResult<Cart>> Update(int id, int quantity)
         {
@@ -132,6 +137,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "User")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Cart>> Delete(int id)
         {

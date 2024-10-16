@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.Models.Entities;
@@ -7,6 +8,7 @@ using ShopApp.Utils;
 
 namespace ShopApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/productImage")]
     public class ProductImageController : Controller

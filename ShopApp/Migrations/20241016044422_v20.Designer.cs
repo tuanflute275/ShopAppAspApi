@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApp.Data;
 
@@ -11,9 +12,11 @@ using ShopApp.Data;
 namespace ShopApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241016044422_v20")]
+    partial class v20
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,10 +196,15 @@ namespace ShopApp.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("ntext");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Percent")
                         .HasColumnType("int");
 
                     b.HasKey("CouponId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Coupon");
                 });
@@ -233,29 +241,6 @@ namespace ShopApp.Migrations
                     b.HasIndex("CouponId");
 
                     b.ToTable("couponCondition");
-                });
-
-            modelBuilder.Entity("ShopApp.Models.Entities.CouponOrder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CouponId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("CouponOrders");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.Log", b =>
@@ -586,7 +571,12 @@ namespace ShopApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Role");
                 });
@@ -725,6 +715,17 @@ namespace ShopApp.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ShopApp.Models.Entities.Coupon", b =>
+                {
+                    b.HasOne("ShopApp.Models.Entities.Order", "Order")
+                        .WithMany("Coupons")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("ShopApp.Models.Entities.CouponCondition", b =>
                 {
                     b.HasOne("ShopApp.Models.Entities.Coupon", "Coupon")
@@ -734,25 +735,6 @@ namespace ShopApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Coupon");
-                });
-
-            modelBuilder.Entity("ShopApp.Models.Entities.CouponOrder", b =>
-                {
-                    b.HasOne("ShopApp.Models.Entities.Coupon", "Coupon")
-                        .WithMany("CouponOrders")
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ShopApp.Models.Entities.Order", "Order")
-                        .WithMany("CouponOrders")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Coupon");
-
-                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.Order", b =>
@@ -837,6 +819,13 @@ namespace ShopApp.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ShopApp.Models.Entities.Role", b =>
+                {
+                    b.HasOne("ShopApp.Models.Entities.User", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("ShopApp.Models.Entities.UserRole", b =>
                 {
                     b.HasOne("ShopApp.Models.Entities.Role", "Role")
@@ -869,13 +858,11 @@ namespace ShopApp.Migrations
             modelBuilder.Entity("ShopApp.Models.Entities.Coupon", b =>
                 {
                     b.Navigation("CouponConditions");
-
-                    b.Navigation("CouponOrders");
                 });
 
             modelBuilder.Entity("ShopApp.Models.Entities.Order", b =>
                 {
-                    b.Navigation("CouponOrders");
+                    b.Navigation("Coupons");
 
                     b.Navigation("OrderDetails");
                 });
@@ -899,6 +886,8 @@ namespace ShopApp.Migrations
             modelBuilder.Entity("ShopApp.Models.Entities.User", b =>
                 {
                     b.Navigation("Carts");
+
+                    b.Navigation("Roles");
 
                     b.Navigation("UserRoles");
                 });

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.Models.Entities;
@@ -83,8 +84,9 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", pageData));
         }
 
+
         [HttpGet("{productId}")]
-        public async Task<ActionResult<ProductComment>> FindByBlogId(int productId)
+        public async Task<ActionResult<ProductComment>> FindByProductId(int productId)
         {
             var productCmt = await _context.ProductComments
                 .Where(x => x.ProductId == productId)
@@ -96,6 +98,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", productCmt));
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpGet("{userId}/{productId}")]
         public async Task<ActionResult<BlogComment>> FindById(int userId, int productId)
         {
@@ -109,6 +112,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", productCmt));
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<ActionResult<ProductComment>> Save(CommentModel model)
         {
@@ -136,6 +140,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpPut("{id}")]
         public async Task<ActionResult<ProductComment>> Update(int id, CommentUpdateModel model)
         {
@@ -162,6 +167,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProductComment>> Delete(int id)
         {

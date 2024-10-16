@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace ShopApp.DTO
+﻿namespace ShopApp.DTO
 {
     public class BlogDTO
     {

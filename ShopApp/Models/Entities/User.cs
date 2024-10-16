@@ -61,7 +61,6 @@ namespace ShopApp.Models.Entities
         [Column]
         public DateTime? UserUnlockTime { get; set; }
 
-        public virtual ICollection<Role> Roles { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; }
 
         [JsonIgnore]

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.DTO;
@@ -9,6 +10,7 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
+    [Authorize(Roles = "Admin, User")]
     [ApiController]
     [Route("api/user")]
     public class UserController : Controller
@@ -22,7 +24,10 @@ namespace ShopApp.Controllers
         [HttpGet]
         public async Task<ActionResult<User>> FindAll(string? username, string? email, string? sort, int page = 1)
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Include(x => x.UserRoles)
+                .ThenInclude(u => u.Role)
+                .ToListAsync();
             if (!string.IsNullOrEmpty(username))
             {
                 users = await _context.Users.Where(x => x.UserName.Contains(username)).ToListAsync();
@@ -70,9 +75,26 @@ namespace ShopApp.Controllers
                 }
             }
 
+            var userDTOs = users.Select(user => new UserDTO
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                UserFullName = user.UserName,
+                UserAvatar = user.UserAvatar,
+                UserEmail = user.UserEmail,
+                UserPhoneNumber = user.UserPhoneNumber,
+                UserAddress = user.UserAddress,
+                UserGender = user.UserGender,
+                UserActive = user.UserActive,
+                UserCount = user.UserCount,
+                UserCurrentTime = user.UserCurrentTime,
+                UserUnlockTime = user.UserUnlockTime,
+                RoleNames = user.UserRoles.Select(ur => ur.Role.RoleName).ToList()
+            }).ToList();
+
             int limit = 10;
             page = page <= 1 ? 1 : page;
-            var pageData = users.ToPagedList(page, limit);
+            var pageData = userDTOs.ToPagedList(page, limit);
             return Ok(new ResponseObject(200, "Query data successfully", pageData));
         }
 
@@ -80,12 +102,30 @@ namespace ShopApp.Controllers
         public async Task<ActionResult<User>> FindById(int id)
         {
             var user = await _context.Users
+                .Include(x => x.UserRoles)
+                .ThenInclude(u => u.Role)
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (user == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
             }
-            return Ok(new ResponseObject(200, "Query data successfully", user));
+            var userDTO = new UserDTO
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                UserFullName = user.UserName,
+                UserAvatar  = user.UserAvatar,
+                UserEmail = user.UserEmail,
+                UserPhoneNumber = user.UserPhoneNumber,
+                UserAddress = user.UserAddress,
+                UserGender = user.UserGender,
+                UserActive = user.UserActive,
+                UserCount = user.UserCount,
+                UserCurrentTime = user.UserCurrentTime,
+                UserUnlockTime = user.UserUnlockTime,
+                RoleNames = user.UserRoles.Select(ur => ur.Role.RoleName).ToList()
+            };
+            return Ok(new ResponseObject(200, "Query data successfully", userDTO));
         }
 
         [HttpPost]

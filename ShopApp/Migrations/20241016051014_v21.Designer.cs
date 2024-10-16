@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApp.Data;
 
@@ -11,9 +12,11 @@ using ShopApp.Data;
 namespace ShopApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241016051014_v21")]
+    partial class v21
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -586,7 +589,12 @@ namespace ShopApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Role");
                 });
@@ -837,6 +845,13 @@ namespace ShopApp.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ShopApp.Models.Entities.Role", b =>
+                {
+                    b.HasOne("ShopApp.Models.Entities.User", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("ShopApp.Models.Entities.UserRole", b =>
                 {
                     b.HasOne("ShopApp.Models.Entities.Role", "Role")
@@ -899,6 +914,8 @@ namespace ShopApp.Migrations
             modelBuilder.Entity("ShopApp.Models.Entities.User", b =>
                 {
                     b.Navigation("Carts");
+
+                    b.Navigation("Roles");
 
                     b.Navigation("UserRoles");
                 });

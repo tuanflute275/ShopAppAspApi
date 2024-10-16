@@ -23,8 +23,7 @@ namespace ShopApp.Models.Entities
 
         [Column]
         public bool Active { get; set; } = true;
-
-        [JsonIgnore]
+        public virtual ICollection<CouponOrder> CouponOrders { get; set; } = new List<CouponOrder>();
         public virtual ICollection<CouponCondition> CouponConditions { get; set; } = new List<CouponCondition>();
     }
 }
