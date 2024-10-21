@@ -8,6 +8,7 @@ using System.Net.Mail;
 using System.Net;
 using ShopApp.DTO;
 using Microsoft.AspNetCore.Authorization;
+using ShopApp.Enums;
 
 namespace ShopApp.Controllers
 {
@@ -199,7 +200,7 @@ namespace ShopApp.Controllers
                         OrderQuantity = (int)total.Quantity,
                         OrderEmail = model.OrderEmail,
                         OrderDate = DateTime.Now,
-                        OrderStatus = 1,
+                        OrderStatus = (int) OrderStatus.CHUAN_BI_DON_HANG,
                         OrderNote = model.OrderNote,
                         OrderPhoneNumber = model.OrderPhoneNumber,
                         OrderStatusPayment = model.OrderStatusPayment,

@@ -36,6 +36,10 @@ namespace ShopApp.Data
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<CouponCondition> CouponConditions { get; set; }
         public DbSet<CouponOrder> CouponOrders { get; set; }
+        public DbSet<Banner> Banners { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
     }
 }
