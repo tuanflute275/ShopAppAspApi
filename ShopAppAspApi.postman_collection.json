@@ -7,6 +7,140 @@
 	},
 	"item": [
 		{
+			"name": "Banner",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/banner",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/banner?sort=Id-DESC&page=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"banner"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "Id-DESC"
+								},
+								{
+									"key": "sort",
+									"value": "Date-ASC",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/banner",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Title",
+									"value": "title banner",
+									"type": "text"
+								},
+								{
+									"key": "ImageFile",
+									"type": "file",
+									"src": "/D:/Pictures/shopapp-fashion/product/pr9.jpg"
+								},
+								{
+									"key": "OldImage",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/banner",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"banner"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/banner/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Title",
+									"value": "title banner update",
+									"type": "text"
+								},
+								{
+									"key": "ImageFile",
+									"type": "file",
+									"src": "/D:/Pictures/shopapp-fashion/product/pr10.jpg"
+								},
+								{
+									"key": "OldImage",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/banner/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"banner",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/banner/id Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/banner/7",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"banner",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Category",
 			"item": [
 				{
@@ -992,6 +1126,100 @@
 							],
 							"path": [
 								"cart",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wishlish",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/wishlish",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/wishlish?sort=Id-DESC&page=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"wishlish"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "Id-DESC"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/wishlish/userId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/wishlish/1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"wishlish",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/wishlish",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 2,\r\n  \"productId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/wishlish",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"wishlish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/wishlish/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/wishlish/3",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"wishlish",
 								"3"
 							]
 						}
@@ -2348,6 +2576,221 @@
 							"path": [
 								"log",
 								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subscription",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/subscription",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/subscription?sort=Id-DESC&page=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"subscription"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "Promotions",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "Id-DESC"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/subscription",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"subscriptionType\": \"string\",\r\n  \"createDate\": \"2024-10-21T06:52:08.739Z\",\r\n  \"updateDate\": \"2024-10-21T06:52:08.739Z\",\r\n  \"userId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/subscription",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/subscription/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"subscriptionType\": \"test update\",\r\n  \"createDate\": \"2024-10-21T06:52:08.739Z\",\r\n  \"updateDate\": \"2024-10-21T06:52:08.739Z\",\r\n  \"userId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/subscription/5",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"subscription",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/subscription/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/subscription/5",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"subscription",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "{{API_PREFIX}}/notify",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/notify?sort=Id-DESC&sort=Date-ASC&page=1",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"notify"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "Id-DESC"
+								},
+								{
+									"key": "sort",
+									"value": "Date-ASC"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/notify",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"message\": \"string\",\r\n  \"isRead\": true,\r\n  \"dateSent\": \"2024-10-21T07:18:18.001Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/notify",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"notify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/notify/id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"message\": \"string update\",\r\n  \"isRead\": true,\r\n  \"dateSent\": \"2024-10-21T07:18:18.001Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_PREFIX}}/notify/2",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"notify",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{API_PREFIX}}/notify/id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_PREFIX}}/notify/2",
+							"host": [
+								"{{API_PREFIX}}"
+							],
+							"path": [
+								"notify",
+								"2"
 							]
 						}
 					},
