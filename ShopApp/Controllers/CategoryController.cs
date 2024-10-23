@@ -6,6 +6,8 @@ using X.PagedList;
 using ShopApp.Utils;
 using ShopApp.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Azure;
 
 namespace ShopApp.Controllers
 {
@@ -66,10 +68,25 @@ namespace ShopApp.Controllers
                 }
             }
 
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = categories.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (categories.Count > 0)
+            {
+                int totalRecords = categories.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = categories.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", categories));
         }
 
         [HttpGet("{id:int}")]

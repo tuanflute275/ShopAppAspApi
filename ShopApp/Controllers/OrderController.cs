@@ -9,6 +9,7 @@ using System.Net;
 using ShopApp.DTO;
 using Microsoft.AspNetCore.Authorization;
 using ShopApp.Enums;
+using X.PagedList;
 
 namespace ShopApp.Controllers
 {
@@ -21,10 +22,47 @@ namespace ShopApp.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult> FindAll()
+        public async Task<ActionResult> FindAll(string? sort, int page = 1)
         {
             var orders = await _context.Orders.ToListAsync();
-            return Ok(orders);
+            if (!string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "Id-ASC":
+                        orders = await _context.Orders.OrderBy(x => x.OrderId).ToListAsync();
+                        break;
+                    case "Id-DESC":
+                        orders = await _context.Orders.OrderByDescending(x => x.OrderId).ToListAsync();
+                        break;
+
+                    case "Date-ASC":
+                        orders = await _context.Orders.OrderBy(x => x.OrderDate).ToListAsync();
+                        break;
+                    case "Date-DESC":
+                        orders = await _context.Orders.OrderByDescending(x => x.OrderDate).ToListAsync();
+                        break;
+                }
+            }
+            if (orders.Count > 0)
+            {
+                int totalRecords = orders.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = orders.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", orders));
         }
 
         [Authorize(Roles = "Admin, User")]

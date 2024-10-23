@@ -66,10 +66,25 @@ namespace ShopApp.Controllers
                 }
             }
 
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = subscriptions.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (subscriptions.Count > 0)
+            {
+                int totalRecords = subscriptions.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = subscriptions.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", subscriptions));
         }
 
         [HttpPost]

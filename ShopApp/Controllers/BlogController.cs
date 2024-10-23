@@ -70,10 +70,25 @@ namespace ShopApp.Controllers
                 }
             }
 
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = blogs.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (blogs.Count > 0)
+            {
+                int totalRecords = blogs.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = blogs.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", blogs));
         }
 
         [HttpGet("{id:int}")]
@@ -161,7 +176,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", blogs));
         }
         
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Blog>> Save([FromForm] BlogModel model)
         {

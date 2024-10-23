@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="BCrypt.Net" Version="0.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -26,8 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
-    <Folder Include="wwwroot\uploads\banners\" />
     <Folder Include="wwwroot\uploads\blogs\" />
     <Folder Include="wwwroot\uploads\products\" />
     <Folder Include="wwwroot\uploads\users\" />

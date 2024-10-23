@@ -26,7 +26,7 @@ namespace ShopApp.Controllers
             var logs = await _context.Logs.ToListAsync();
             if (!string.IsNullOrEmpty(username))
             {
-                logs = await _context.Logs.Where(x => x.UserName.Contains(username)).ToListAsync();
+                logs = await _context.Logs.Where(x => x.UserName.Contains(username) || x.WorkTation.Contains(username)).ToListAsync();
             }
             if (!string.IsNullOrEmpty(sort))
             {
@@ -67,10 +67,25 @@ namespace ShopApp.Controllers
                 }
             }
 
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = logs.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (logs.Count > 0)
+            {
+                int totalRecords = logs.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = logs.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", logs));
         }
 
         [HttpGet("{id}")]

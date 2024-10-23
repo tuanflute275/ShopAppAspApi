@@ -100,10 +100,25 @@ namespace ShopApp.Controllers
                 CategorySlug = p.Category.CategorySlug
             }).ToList();
 
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = productDTOs.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (products.Count > 0)
+            {
+                int totalRecords = products.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = products.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", products));
         }
 
         [HttpGet("{id:int}")]

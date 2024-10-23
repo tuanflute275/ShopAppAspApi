@@ -92,10 +92,25 @@ namespace ShopApp.Controllers
                 RoleNames = user.UserRoles.Select(ur => ur.Role.RoleName).ToList()
             }).ToList();
 
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = userDTOs.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (users.Count > 0)
+            {
+                int totalRecords = users.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = users.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", users));
         }
 
         [HttpGet("{id:int}")]

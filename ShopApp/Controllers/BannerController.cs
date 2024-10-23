@@ -10,7 +10,7 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/banner")]
     public class BannerController : Controller
@@ -23,10 +23,13 @@ namespace ShopApp.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<Banner>> Index(string? sort, int page = 1)
+        public async Task<ActionResult<Banner>> Index(string? name, string? sort, int page = 1)
         {
             var banners = await _context.Banners.ToListAsync();
-           
+            if (!string.IsNullOrEmpty(name))
+            {
+                banners = await _context.Banners.Where(x => x.Title.Contains(name)).ToListAsync();
+            }
             if (!string.IsNullOrEmpty(sort))
             {
                 switch (sort)
@@ -46,10 +49,55 @@ namespace ShopApp.Controllers
                         break;
                 }
             }
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = banners.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "Id-ASC":
+                        banners = await _context.Banners.Where(x => x.Title.Contains(name)).OrderBy(x => x.BannerId).ToListAsync();
+                        break;
+                    case "Id-DESC":
+                        banners = await _context.Banners.Where(x => x.Title.Contains(name)).OrderByDescending(x => x.BannerId).ToListAsync();
+                        break;
+
+                    case "Date-ASC":
+                        banners = await _context.Banners.Where(x => x.Title.Contains(name)).OrderBy(x => x.CreateDate).ToListAsync();
+                        break;
+                    case "Date-DESC":
+                        banners = await _context.Banners.Where(x => x.Title.Contains(name)).OrderByDescending(x => x.CreateDate).ToListAsync();
+                        break;
+                }
+            }
+            if (banners.Count > 0)
+            {
+                int totalRecords = banners.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = banners.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", banners));
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Banner>> FindById(int id)
+        {
+            var banner = await _context.Banners.FindAsync(id);
+            if (banner == null)
+            {
+                return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", banner));
         }
 
         [HttpPost]
