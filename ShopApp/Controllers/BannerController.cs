@@ -10,7 +10,6 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
-    //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/banner")]
     public class BannerController : Controller
@@ -100,6 +99,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", banner));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Banner>> Save([FromForm] BannerModel model)
         {
@@ -154,6 +154,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<Banner>> Update(int id, [FromForm] BannerModel model)
         {
@@ -209,6 +210,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Banner>> Delete(int id)
         {

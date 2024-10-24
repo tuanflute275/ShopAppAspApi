@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ShopApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("/api/notify")]
     public class NotifyController : Controller
@@ -45,17 +44,48 @@ namespace ShopApp.Controllers
                 }
             }
 
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = notifications.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (notifications.Count > 0)
+            {
+                int totalRecords = notifications.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = notifications.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", notifications));
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Notification>> FindById(int id)
+        {
+            var notify = await _context.Notifications.FindAsync(id);
+            if (notify == null)
+            {
+                return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", notify));
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<Notification>> Save(Notification notification)
+        public async Task<ActionResult<Notification>> Save(NotifyModel model)
         {
             try
             {
+                Notification notification = new Notification();
+                notification.Message = model.Message;
+                notification.IsRead = false;
+                notification.DateSent = DateTime.Now;
                 await _context.Notifications.AddAsync(notification);
                 _context.SaveChanges();
                 return Ok(new ResponseObject(200, "Insert data successfully", notification));
@@ -67,8 +97,9 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<Notification>> Update(int id, Notification model)
+        public async Task<ActionResult<Notification>> Update(int id, NotifyModel model)
         {
             var notify = await _context.Notifications.FindAsync(id);
             if (notify != null)
@@ -91,6 +122,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Notification>> Delete(int id)
         {

@@ -7,6 +7,7 @@ namespace ShopApp.Models.Entities
     public class Notification
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int NotificationId { get; set; }
        
         [Required]
@@ -14,9 +15,9 @@ namespace ShopApp.Models.Entities
         public string Message { get; set; }
 
         [Required]
-        public bool IsRead { get; set; } = false; 
+        public bool? IsRead { get; set; } = false; 
 
         [Required]
-        public DateTime DateSent { get; set; } = DateTime.Now;
+        public DateTime? DateSent { get; set; } = DateTime.Now;
     }
 }

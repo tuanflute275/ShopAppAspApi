@@ -6,6 +6,7 @@ namespace ShopApp.Models.Entities
     public class CouponOrder
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [ForeignKey("Coupon")]

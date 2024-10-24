@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
+using ShopApp.DTO;
 using ShopApp.Models.Entities;
 using ShopApp.Models.ViewModels;
 using ShopApp.Utils;
@@ -22,7 +23,7 @@ namespace ShopApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(string? type, string? sort, int page = 1)
         {
-            var subscriptions = await _context.Subscriptions.ToListAsync();
+            var subscriptions = await _context.Subscriptions.Include(x => x.User).ToListAsync();
             if (!string.IsNullOrEmpty(type))
             {
                 subscriptions = await _context.Subscriptions.Where(x => x.SubscriptionType.Contains(type)).ToListAsync();
@@ -66,12 +67,21 @@ namespace ShopApp.Controllers
                 }
             }
 
-            if (subscriptions.Count > 0)
+            var subscriptionDTOs = subscriptions.Select(s => new SubscriptionDTO
             {
-                int totalRecords = subscriptions.Count();
+               SubscriptionId = s.SubscriptionId,
+               SubscriptionType = s.SubscriptionType,
+               CreateDate = s.CreateDate,
+               UpdateDate = s.UpdateDate,
+               Username = s.User.UserName
+            }).ToList();
+
+            if (subscriptionDTOs.Count > 0)
+            {
+                int totalRecords = subscriptionDTOs.Count();
                 int limit = 10;
                 page = page <= 1 ? 1 : page;
-                var pageData = subscriptions.ToPagedList(page, limit);
+                var pageData = subscriptionDTOs.ToPagedList(page, limit);
 
                 int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
 
@@ -84,8 +94,20 @@ namespace ShopApp.Controllers
 
                 return Ok(new ResponseObject(200, "Query data successfully", response));
             }
-            return Ok(new ResponseObject(200, "Query data successfully", subscriptions));
+            return Ok(new ResponseObject(200, "Query data successfully", subscriptionDTOs));
         }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Subscription>> FindById(int id)
+        {
+            var subcription = await _context.Subscriptions.FindAsync(id);
+            if (subcription == null)
+            {
+                return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", subcription));
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<Subscription>> Save(SubscriptionModel model)

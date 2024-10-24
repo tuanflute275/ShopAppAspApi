@@ -79,23 +79,113 @@ namespace ShopApp.Controllers
                         break;
                 }
             }
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = blogCmts.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (blogCmts.Count > 0)
+            {
+                int totalRecords = blogCmts.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = blogCmts.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", blogCmts));
         }
 
         [HttpGet("{blogId}")]
-        public async Task<ActionResult<BlogComment>> FindByBlogId(int blogId)
+        public async Task<ActionResult<BlogComment>> FindByBlogId(int blogId, string? name, string? sort, int page = 1)
         {
-            var blogCmt = await _context.BlogComments
+            var blogCmts = await _context.BlogComments
                 .Where(x => x.BlogId == blogId)
                 .ToListAsync();
-            if (blogCmt == null)
+            if (blogCmts == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with blogId {blogId} ", null));
             }
-            return Ok(new ResponseObject(200, "Query data successfully", blogCmt));
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId && x.Name.Contains(name) || x.Email.Contains(name)).ToListAsync();
+            }
+            if (!string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "Id-ASC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId).OrderBy(x => x.BlogCommentId).ToListAsync();
+                        break;
+                    case "Id-DESC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId).OrderByDescending(x => x.BlogCommentId).ToListAsync();
+                        break;
+
+                    case "Name-ASC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId).OrderBy(x => x.Name).ToListAsync();
+                        break;
+                    case "Name-DESC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId).OrderByDescending(x => x.Name).ToListAsync();
+                        break;
+
+                    case "Date-ASC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId).OrderBy(x => x.CreateDate).ToListAsync();
+                        break;
+                    case "Date-DESC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId).OrderByDescending(x => x.CreateDate).ToListAsync();
+                        break;
+                }
+            }
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "Id-ASC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId && x.Name.Contains(name) || x.Email.Contains(name)).OrderBy(x => x.BlogCommentId).ToListAsync();
+                        break;
+                    case "Id-DESC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId && x.Name.Contains(name) || x.Email.Contains(name)).OrderByDescending(x => x.BlogCommentId).ToListAsync();
+                        break;
+
+                    case "Name-ASC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId && x.Name.Contains(name) || x.Email.Contains(name)).OrderBy(x => x.Name).ToListAsync();
+                        break;
+                    case "Name-DESC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId && x.Name.Contains(name) || x.Email.Contains(name)).OrderByDescending(x => x.Name).ToListAsync();
+                        break;
+
+                    case "Date-ASC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId && x.Name.Contains(name) || x.Email.Contains(name)).OrderBy(x => x.CreateDate).ToListAsync();
+                        break;
+                    case "Date-DESC":
+                        blogCmts = await _context.BlogComments.Where(x => x.BlogId == blogId && x.Name.Contains(name) || x.Email.Contains(name)).OrderByDescending(x => x.CreateDate).ToListAsync();
+                        break;
+                }
+            }
+            if (blogCmts.Count > 0)
+            {
+                int totalRecords = blogCmts.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = blogCmts.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", blogCmts));
         }
 
         [Authorize(Roles = "Admin,User")]
@@ -112,7 +202,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", blogCmt));
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<ActionResult<BlogComment>> Save(CommentModel model)
         {

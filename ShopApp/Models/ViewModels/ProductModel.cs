@@ -6,7 +6,7 @@ namespace ShopApp.Models.ViewModels
     {
         [Required]
         public string ProductName { get; set; }
-        public IFormFile ImageFile { get; set; }
+        public IFormFile? ImageFile { get; set; }
         public string? OldImage { get; set; }
         [Range(0, double.MaxValue)]
         public double ProductPrice { get; set; }

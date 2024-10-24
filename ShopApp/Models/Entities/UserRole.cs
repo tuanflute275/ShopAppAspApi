@@ -7,6 +7,7 @@ namespace ShopApp.Models.Entities
     public class UserRole
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Column]

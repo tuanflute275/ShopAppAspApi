@@ -440,6 +440,8 @@ namespace ShopApp.Controllers
             var productDetails = await _context.ProductDetails.Where(x => x.ProductId == id).ToListAsync();
             var productImages = await _context.ProductImages.Where(x => x.ProductId == id).ToListAsync();
             var orderDetails = await _context.OrderDetails.Where(x => x.ProductId == id).ToListAsync();
+            var wishlists = await _context.Wishlists.Where(x => x.ProductId == id).ToListAsync();
+            var carts = await _context.Carts.Where(x => x.ProductId == id).ToListAsync();
             if (product == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
@@ -457,6 +459,16 @@ namespace ShopApp.Controllers
             if (productDetails != null && productDetails.Count > 0)
             {
                 _context.ProductDetails.RemoveRange(productDetails);
+                await _context.SaveChangesAsync();
+            }
+            if (wishlists != null && wishlists.Count > 0)
+            {
+                _context.Wishlists.RemoveRange(wishlists);
+                await _context.SaveChangesAsync();
+            }
+            if (carts != null && carts.Count > 0)
+            {
+                _context.Carts.RemoveRange(carts);
                 await _context.SaveChangesAsync();
             }
             if (productImages != null && productImages.Count > 0)

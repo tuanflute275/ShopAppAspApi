@@ -176,7 +176,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", blogs));
         }
         
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Blog>> Save([FromForm] BlogModel model)
         {
@@ -221,6 +221,7 @@ namespace ShopApp.Controllers
                     blog.BlogSlug = Util.GenerateSlug(model.BlogTitle);
                     blog.UserId = model.UserId;
                     blog.CreateDate = DateTime.Now;
+                    blog.UpdateDate = null;
                     blog.BlogDescription = model.BlogDescription;
                     await _context.Blogs.AddAsync(blog);
                     _context.SaveChanges();

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
 using ShopApp.DTO;
@@ -9,6 +10,7 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
+    [Authorize(Roles = "Admin, User")]
     [ApiController]
     [Route("api/wishlish")]
     public class WishlistController : Controller

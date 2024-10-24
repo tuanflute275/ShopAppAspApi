@@ -22,19 +22,15 @@ namespace ShopApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<User>> FindAll(string? username, string? email, string? sort, int page = 1)
+        public async Task<ActionResult<User>> FindAll(string? name, string? sort, int page = 1)
         {
             var users = await _context.Users
                 .Include(x => x.UserRoles)
                 .ThenInclude(u => u.Role)
                 .ToListAsync();
-            if (!string.IsNullOrEmpty(username))
+            if (!string.IsNullOrEmpty(name))
             {
-                users = await _context.Users.Where(x => x.UserName.Contains(username)).ToListAsync();
-            }
-            if (!string.IsNullOrEmpty(email))
-            {
-                users = await _context.Users.Where(x => x.UserEmail.Contains(email)).ToListAsync();
+                users = await _context.Users.Where(x => x.UserName.Contains(name) || x.UserEmail.Contains(name)).ToListAsync();
             }
             if (!string.IsNullOrEmpty(sort))
             {
@@ -55,22 +51,22 @@ namespace ShopApp.Controllers
                         break;
                 }
             }
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(sort))
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(sort))
             {
                 switch (sort)
                 {
                     case "Id-ASC":
-                        users = await _context.Users.Where(x => x.UserName.Contains(username)).OrderBy(x => x.Id).ToListAsync();
+                        users = await _context.Users.Where(x => x.UserName.Contains(name)).OrderBy(x => x.Id).ToListAsync();
                         break;
                     case "Id-DESC":
-                        users = await _context.Users.Where(x => x.UserName.Contains(username)).OrderByDescending(x => x.Id).ToListAsync();
+                        users = await _context.Users.Where(x => x.UserName.Contains(name)).OrderByDescending(x => x.Id).ToListAsync();
                         break;
 
                     case "Name-ASC":
-                        users = await _context.Users.Where(x => x.UserName.Contains(username)).OrderBy(x => x.Id).ToListAsync();
+                        users = await _context.Users.Where(x => x.UserName.Contains(name)).OrderBy(x => x.Id).ToListAsync();
                         break;
                     case "Name-DESC":
-                        users = await _context.Users.Where(x => x.UserName.Contains(username)).OrderByDescending(x => x.Id).ToListAsync();
+                        users = await _context.Users.Where(x => x.UserName.Contains(name)).OrderByDescending(x => x.Id).ToListAsync();
                         break;
                 }
             }
@@ -92,12 +88,12 @@ namespace ShopApp.Controllers
                 RoleNames = user.UserRoles.Select(ur => ur.Role.RoleName).ToList()
             }).ToList();
 
-            if (users.Count > 0)
+            if (userDTOs.Count > 0)
             {
-                int totalRecords = users.Count();
+                int totalRecords = userDTOs.Count();
                 int limit = 10;
                 page = page <= 1 ? 1 : page;
-                var pageData = users.ToPagedList(page, limit);
+                var pageData = userDTOs.ToPagedList(page, limit);
 
                 int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
 
@@ -110,7 +106,7 @@ namespace ShopApp.Controllers
 
                 return Ok(new ResponseObject(200, "Query data successfully", response));
             }
-            return Ok(new ResponseObject(200, "Query data successfully", users));
+            return Ok(new ResponseObject(200, "Query data successfully", userDTOs));
         }
 
         [HttpGet("{id:int}")]
@@ -307,10 +303,54 @@ namespace ShopApp.Controllers
         public async Task<ActionResult<User>> Delete(int id)
         {
             var user = await _context.Users.FindAsync(id);
+            var userRoles = await _context.UserRoles.Where(x => x.UserId == id).ToListAsync();
+            var blogs = await _context.Blogs.Where(x => x.UserId == id).ToListAsync();
+            var blogCmts = await _context.BlogComments.Where(x => x.UserId == id).ToListAsync();
+            var carts = await _context.Carts.Where(x => x.UserId == id).ToListAsync();
+            var wishlists = await _context.Wishlists.Where(x => x.UserId == id).ToListAsync();
+            var orders = await _context.Orders.Where(x => x.UserId == id).ToListAsync();
+            var productCmts = await _context.ProductComments.Where(x => x.UserId == id).ToListAsync();
+            var subscriptions = await _context.Subscriptions.Where(x => x.UserId == id).ToListAsync();
             if (user == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
             }
+            if (userRoles != null && userRoles.Count > 0)
+            {
+                _context.UserRoles.RemoveRange(userRoles);
+                await _context.SaveChangesAsync();
+            }
+            if (blogs != null && blogs.Count > 0)
+            {
+                _context.Blogs.RemoveRange(blogs);
+                await _context.SaveChangesAsync();
+            }
+            if (blogCmts != null && blogCmts.Count > 0)
+            {
+                _context.BlogComments.RemoveRange(blogCmts);
+                await _context.SaveChangesAsync();
+            }
+            if (carts != null && carts.Count > 0)
+            {
+                _context.Carts.RemoveRange(carts);
+                await _context.SaveChangesAsync();
+            }
+            if (wishlists != null && wishlists.Count > 0)
+            {
+                _context.Wishlists.RemoveRange(wishlists);
+                await _context.SaveChangesAsync();
+            }
+            if (productCmts != null && productCmts.Count > 0)
+            {
+                _context.ProductComments.RemoveRange(productCmts);
+                await _context.SaveChangesAsync();
+            }
+            if (subscriptions != null && subscriptions.Count > 0)
+            {
+                _context.Subscriptions.RemoveRange(subscriptions);
+                await _context.SaveChangesAsync();
+            }
+
             try
             {
                 _context.Users.Remove(user);
