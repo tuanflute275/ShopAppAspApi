@@ -12,7 +12,7 @@ namespace ShopApp.Models.ViewModels
         [EmailAddress]
         public string UserEmail { get; set; }
         [MinLength(6)]
-        public string UserPassword { get; set; }
+        public string? UserPassword { get; set; }
         public string? UserPhoneNumber { get; set; }
         public string? UserAddress { get; set; }
         public bool UserGender { get; set; } = true;

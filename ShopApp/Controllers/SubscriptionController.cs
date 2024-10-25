@@ -10,6 +10,7 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
+    [Authorize(Roles = "Admin, User")]
     [ApiController]
     [Route("api/subscription")]
     public class SubscriptionController : Controller

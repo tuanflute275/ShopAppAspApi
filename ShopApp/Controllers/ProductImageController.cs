@@ -8,7 +8,6 @@ using ShopApp.Utils;
 
 namespace ShopApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/productImage")]
     public class ProductImageController : Controller
@@ -36,6 +35,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", productImages));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Product>> Save([FromForm] ProductImageModel model)
         {
@@ -55,7 +55,7 @@ namespace ShopApp.Controllers
 
                         var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
 
-                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "products");
+                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "productComments");
                         var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                         if (!Directory.Exists(uploadsFolder))
@@ -73,7 +73,7 @@ namespace ShopApp.Controllers
                             ProductId = model.ProductId,
                             CreateDate = DateTime.Now,
                             UpdateDate = null,
-                            Path = $"http://{HttpContext.Request.Host.Value}/uploads/products/{uniqueFileName}"
+                            Path = $"http://{HttpContext.Request.Host.Value}/uploads/productComments/{uniqueFileName}"
                         };
 
                         await _context.ProductImages.AddAsync(productImage);
@@ -90,7 +90,7 @@ namespace ShopApp.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProductImage>> Delete(int id)
         {

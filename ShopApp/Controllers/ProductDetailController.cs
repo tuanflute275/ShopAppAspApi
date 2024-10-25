@@ -8,7 +8,6 @@ using ShopApp.Utils;
 
 namespace ShopApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/productDetail")]
     public class ProductDetailController : Controller
@@ -37,6 +36,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", productDetails));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Save(ProductDetailModel model)
         {
@@ -60,6 +60,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, UpdateProductDetailModel model)
         {
@@ -86,6 +87,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpPut("{id}/{quantity}")]
         public async Task<ActionResult> UpdateQuantity(int id, int quantity)
         {
@@ -110,6 +112,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProductDetail>> Delete(int id)
         {

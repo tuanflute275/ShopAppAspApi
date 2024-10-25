@@ -254,38 +254,16 @@ namespace ShopApp.Controllers
                     user.UserName = model.UserName;
                     user.UserFullName = model.UserName;
                     user.UserEmail = model.UserEmail;
-                    user.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.UserPassword, 12);
+                    if (!string.IsNullOrEmpty(model.UserPassword))
+                    {
+                        user.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.UserPassword, 12);
+                    }
                     user.UserPhoneNumber = model.UserPhoneNumber;
                     user.UserAddress = model.UserAddress;
                     user.UserGender = model.UserGender;
                     user.UserActive = model.UserActive;
                     await _context.SaveChangesAsync();
 
-                    // lấy userId vừa tạo
-                    var userId = id;
-                    var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == model.Role);
-                    if (role != null)
-                    {
-                        // check data role
-                        var checkRoleInDb = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserId == userId);
-                        if (checkRoleInDb == null) 
-                        {
-                            var userRole = new UserRole
-                            {
-                                UserId = userId,
-                                RoleId = role.Id
-                            };
-                            _context.UserRoles.Add(userRole);
-                            await _context.SaveChangesAsync();
-                        }
-                        else
-                        {
-                            checkRoleInDb.RoleId = role.Id;
-                            await _context.SaveChangesAsync();
-                        }
-
-                       
-                    }
                     return Ok(new ResponseObject(200, "Update data successfully", model));
                 }
                 catch (Exception ex)
