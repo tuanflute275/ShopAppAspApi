@@ -78,24 +78,113 @@ namespace ShopApp.Controllers
                         break;
                 }
             }
-            int limit = 10;
-            page = page <= 1 ? 1 : page;
-            var pageData = productCmts.ToPagedList(page, limit);
-            return Ok(new ResponseObject(200, "Query data successfully", pageData));
+            if (productCmts.Count > 0)
+            {
+                int totalRecords = productCmts.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = productCmts.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", productCmts));
         }
 
 
         [HttpGet("{productId}")]
-        public async Task<ActionResult<ProductComment>> FindByProductId(int productId)
+        public async Task<ActionResult<ProductComment>> FindByProductId(int productId, string? name, string? sort, int page = 1)
         {
-            var productCmt = await _context.ProductComments
+            var productCmts = await _context.ProductComments
                 .Where(x => x.ProductId == productId)
                 .ToListAsync();
-            if (productCmt == null)
+            if (productCmts == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with productId {productId} ", null));
             }
-            return Ok(new ResponseObject(200, "Query data successfully", productCmt));
+            if (!string.IsNullOrEmpty(name))
+            {
+                productCmts = await _context.ProductComments.Where(x => x.ProductId == productId && x.Name.Contains(name) || x.Email.Contains(name)).ToListAsync();
+            }
+            if (!string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "Id-ASC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId).OrderBy(x => x.ProductCommentId).ToListAsync();
+                        break;
+                    case "Id-DESC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId).OrderByDescending(x => x.ProductCommentId).ToListAsync();
+                        break;
+
+                    case "Name-ASC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId).OrderBy(x => x.Name).ToListAsync();
+                        break;
+                    case "Name-DESC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId).OrderByDescending(x => x.Name).ToListAsync();
+                        break;
+
+                    case "Date-ASC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId).OrderBy(x => x.CreateDate).ToListAsync();
+                        break;
+                    case "Date-DESC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId).OrderByDescending(x => x.CreateDate).ToListAsync();
+                        break;
+                }
+            }
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "Id-ASC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId && x.Name.Contains(name) || x.Email.Contains(name)).OrderBy(x => x.ProductCommentId).ToListAsync();
+                        break;
+                    case "Id-DESC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId && x.Name.Contains(name) || x.Email.Contains(name)).OrderByDescending(x => x.ProductCommentId).ToListAsync();
+                        break;
+
+                    case "Name-ASC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId && x.Name.Contains(name) || x.Email.Contains(name)).OrderBy(x => x.Name).ToListAsync();
+                        break;
+                    case "Name-DESC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId && x.Name.Contains(name) || x.Email.Contains(name)).OrderByDescending(x => x.Name).ToListAsync();
+                        break;
+
+                    case "Date-ASC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId && x.Name.Contains(name)).OrderBy(x => x.CreateDate).ToListAsync();
+                        break;
+                    case "Date-DESC":
+                        productCmts = await _context.ProductComments.Where(x => x.ProductId == productId && x.Name.Contains(name)).OrderByDescending(x => x.CreateDate).ToListAsync();
+                        break;
+                }
+            }
+            if (productCmts.Count > 0)
+            {
+                int totalRecords = productCmts.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = productCmts.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", productCmts));
         }
 
         [Authorize(Roles = "Admin,User")]

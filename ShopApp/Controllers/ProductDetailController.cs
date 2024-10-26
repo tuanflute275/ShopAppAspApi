@@ -5,6 +5,7 @@ using ShopApp.Data;
 using ShopApp.Models.Entities;
 using ShopApp.Models.ViewModels;
 using ShopApp.Utils;
+using X.PagedList;
 
 namespace ShopApp.Controllers
 {
@@ -25,13 +26,44 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", productDetails));
         }
 
-        [HttpGet("{productId}")]
-        public async Task<ActionResult> FindByProductId(int productId)
+        [HttpGet("detail/{id}")]
+        public async Task<ActionResult> FindByDetail(int id)
         {
-            var productDetails = await _context.ProductDetails.Where(x => x.ProductId == productId).ToListAsync();
+            var productDetail = await _context.ProductDetails.FindAsync(id);
+            if (productDetail == null)
+            {
+                return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
+            }
+            return Ok(new ResponseObject(200, "Query data successfully", productDetail));
+        }
+
+        [HttpGet("{productId}")]
+        public async Task<ActionResult> FindByProductId(int productId, int page = 1)
+        {
+            var productDetails = await _context.ProductDetails
+                .Where(x => x.ProductId == productId)
+                .ToListAsync();
             if (productDetails == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with productId {productId}", null));
+            }
+            if (productDetails.Count > 0)
+            {
+                int totalRecords = productDetails.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = productDetails.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
             }
             return Ok(new ResponseObject(200, "Query data successfully", productDetails));
         }

@@ -89,6 +89,13 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", categories));
         }
 
+        [HttpGet("all")]
+        public async Task<ActionResult> FindListAll()
+        {
+            var categories = await _context.Categories.ToListAsync();
+            return Ok(new ResponseObject(200, "Query data successfully", categories));
+        }
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Category>> FindById(int id)
         {
