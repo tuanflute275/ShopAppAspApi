@@ -29,18 +29,27 @@ namespace ShopApp.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginModel model)
         {
-            var checkUser = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == model.Email);
+            User checkUser = null;
+
+            if (!string.IsNullOrEmpty(model.UsernameOrEmail))
+            {
+                checkUser = await _context.Users.FirstOrDefaultAsync(x =>
+                            x.UserEmail == model.UsernameOrEmail || x.UserName == model.UsernameOrEmail);
+            }
+            else
+            {
+                return BadRequest(new ResponseObject(400, "Email or username must be provided."));
+            }
             //select user role get roleName
-            var userWithRole = await (from ur in _context.UserRoles
-                                      join u in _context.Users on ur.UserId equals u.Id
-                                      join r in _context.Roles on ur.RoleId equals r.Id
-                                      where ur.UserId == 2
-                                      select new
-                                      {
-                                          UserId = u.Id,
-                                          UserEmail = u.UserEmail,
-                                          RoleName = r.RoleName
-                                      }).FirstOrDefaultAsync();
+            var userRoles = await (from ur in _context.UserRoles
+                                   join r in _context.Roles on ur.RoleId equals r.Id
+                                   where ur.UserId == checkUser.Id
+                                   select new
+                                   {
+                                       UserId = checkUser.Id,
+                                       UserEmail = checkUser.UserEmail,
+                                       RoleName = r.RoleName
+                                   }).ToListAsync();
             if (model == null)
             {
                 return BadRequest(new ResponseObject(400, "Invalid request."));
@@ -59,7 +68,7 @@ namespace ShopApp.Controllers
             {
                 return BadRequest(new ResponseObject(400, "Incorrect password."));
             }
-            if (userWithRole == null)
+            if (userRoles == null)
             {
                 return Ok(new ResponseObject(400, "You do not have access."));
             }
@@ -68,15 +77,20 @@ namespace ShopApp.Controllers
                 // Tạo token JWT
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_configuration["Jwt:key"]);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, checkUser.Id.ToString()),
+                    new Claim(ClaimTypes.Email, checkUser.UserEmail)
+                };
+
+                foreach (var role in userRoles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                }
+
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, checkUser.Id.ToString()),
-                        new Claim(ClaimTypes.Email, checkUser.UserEmail),
-                        new Claim(ClaimTypes.Role, userWithRole.RoleName)
-
-                    }),
+                    Subject = new ClaimsIdentity(claims),
                     Expires = DateTime.UtcNow.AddHours(1),
                     Issuer = _configuration["Jwt:Issuer"],
                     Audience = _configuration["Jwt:Audience"],
@@ -85,7 +99,21 @@ namespace ShopApp.Controllers
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 var tokenString = tokenHandler.WriteToken(token);
 
-                return Ok(new ResponseObject(200, "Login successfully.", new { Token = tokenString }));
+                return Ok(new ResponseObject(200, "Login successfully.", new
+                {
+                    Token = tokenString,
+                    User = new
+                    {
+                        Id = checkUser.Id,
+                        UserName = checkUser.UserName,
+                        FullName = checkUser.UserFullName,
+                        Avatar = checkUser.UserAvatar,
+                        Email = checkUser.UserEmail,
+                        Phone = checkUser.UserPhoneNumber,
+                        Address = checkUser.UserAddress,    
+                        Gender = checkUser.UserGender,
+                    }
+                }));
             }
             catch (Exception ex)
             {

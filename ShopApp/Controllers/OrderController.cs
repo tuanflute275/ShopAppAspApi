@@ -10,6 +10,8 @@ using ShopApp.DTO;
 using Microsoft.AspNetCore.Authorization;
 using ShopApp.Enums;
 using X.PagedList;
+using System.Data;
+using ClosedXML.Excel;
 
 namespace ShopApp.Controllers
 {
@@ -22,9 +24,16 @@ namespace ShopApp.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult> FindAll(string? sort, int page = 1)
+        public async Task<ActionResult> FindAll(string? name, string? sort, int page = 1)
         {
             var orders = await _context.Orders.ToListAsync();
+            if (!string.IsNullOrEmpty(name))
+            {
+                orders = await _context.Orders
+                    .Where(x => x.OrderFullName.Contains(name) || x.OrderAddress.Contains(name)
+                            || x.OrderEmail.Contains(name) || x.OrderPhoneNumber.Contains(name))
+                    .ToListAsync(); 
+            }
             if (!string.IsNullOrEmpty(sort))
             {
                 switch (sort)
@@ -41,6 +50,37 @@ namespace ShopApp.Controllers
                         break;
                     case "Date-DESC":
                         orders = await _context.Orders.OrderByDescending(x => x.OrderDate).ToListAsync();
+                        break;
+                }
+            }
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "Id-ASC":
+                        orders = await _context.Orders
+                            .Where(x => x.OrderFullName.Contains(name) || x.OrderAddress.Contains(name)
+                            || x.OrderEmail.Contains(name) || x.OrderPhoneNumber.Contains(name))
+                            .OrderBy(x => x.OrderId).ToListAsync();
+                        break;
+                    case "Id-DESC":
+                        orders = await _context.Orders
+                            .Where(x => x.OrderFullName.Contains(name) || x.OrderAddress.Contains(name)
+                            || x.OrderEmail.Contains(name) || x.OrderPhoneNumber.Contains(name))
+                            .OrderByDescending(x => x.OrderId).ToListAsync();
+                        break;
+
+                    case "Date-ASC":
+                        orders = await _context.Orders
+                            .Where(x => x.OrderFullName.Contains(name) || x.OrderAddress.Contains(name)
+                            || x.OrderEmail.Contains(name) || x.OrderPhoneNumber.Contains(name))
+                            .OrderBy(x => x.OrderDate).ToListAsync();
+                        break;
+                    case "Date-DESC":
+                        orders = await _context.Orders
+                            .Where(x => x.OrderFullName.Contains(name) || x.OrderAddress.Contains(name)
+                            || x.OrderEmail.Contains(name) || x.OrderPhoneNumber.Contains(name))
+                            .OrderByDescending(x => x.OrderDate).ToListAsync();
                         break;
                 }
             }
@@ -129,8 +169,7 @@ namespace ShopApp.Controllers
                     ProductName = od.Product.ProductName,
                     ProductSlug = od.Product.ProductSlug,
                     ProductImage = od.Product.ProductImage,
-                    ProductPrice = od.Product.ProductPrice,
-                    ProductSalePrice = od.Product.ProductSalePrice,
+                    ProductPrice = od.Product.ProductSalePrice > 0 ? od.Product.ProductSalePrice : od.Product.ProductPrice,
                     CategoryName = od.Product.Category.CategoryName,
                     ProductStatus = od.Product.ProductStatus,
                     Quantity = od.Quantity,
@@ -203,8 +242,7 @@ namespace ShopApp.Controllers
                     ProductName = od.Product.ProductName,
                     ProductSlug = od.Product.ProductSlug,
                     ProductImage = od.Product.ProductImage,
-                    ProductPrice = od.Product.ProductPrice,
-                    ProductSalePrice = od.Product.ProductSalePrice,
+                    ProductPrice = od.Product.ProductSalePrice > 0 ? od.Product.ProductSalePrice : od.Product.ProductPrice,
                     CategoryName = od.Product.Category.CategoryName,
                     ProductStatus = od.Product.ProductStatus,
                     Quantity = od.Quantity,
@@ -214,6 +252,83 @@ namespace ShopApp.Controllers
 
             });
             return Ok(new ResponseObject(200, "Query data successfully", orderDTOs));
+        }
+
+        [Authorize(Roles = "Admin,User")]
+        [HttpGet("export/{id}")]
+        public async Task<FileResult> Export(int id)
+        {
+            if (id != null)
+            {
+                var order = await _context.Orders
+               .Include(x => x.OrderDetails)
+               .ThenInclude(od => od.Product)
+               .ThenInclude(p => p.Category)
+               .Include(x => x.User)
+               .Include(x => x.CouponOrders)
+               .ThenInclude(co => co.Coupon)
+               .ThenInclude(c => c.CouponConditions)
+               .FirstOrDefaultAsync(x => x.OrderId == id);
+                var orderDTO = new OrderDTO
+                {
+                    OrderId = order.OrderId,
+                    OrderFullName = order.OrderFullName,
+                    OrderAddress = order.OrderAddress,
+                    OrderPhoneNumber = order.OrderPhoneNumber,
+                    OrderEmail = order.OrderEmail,
+                    OrderDate = order.OrderDate,
+                    OrderPaymentMethods = order.OrderPaymentMethods,
+                    OrderStatusPayment = order.OrderStatusPayment,
+                    OrderStatus = order.OrderStatus,
+                    OrderQuantity = order.OrderQuantity,
+                    OrderAmount = order.OrderAmount,
+                    OrderNote = order.OrderNote,
+                    User = new UserDTO
+                    {
+                        Id = order.User.Id,
+                        UserName = order.User.UserName,
+                        UserFullName = order.User.UserName,
+                        UserAvatar = order.User.UserAvatar,
+                        UserEmail = order.User.UserEmail,
+                        UserPhoneNumber = order.User.UserPhoneNumber,
+                        UserAddress = order.User.UserAddress,
+                        UserGender = order.User.UserGender,
+                    },
+                    Coupons = order.CouponOrders.Select(co => new CouponDTO
+                    {
+                        CouponId = co.Coupon.CouponId,
+                        Percent = co.Coupon.Percent,
+                        Code = co.Coupon.Code,
+                        Active = co.Coupon.Active,
+                        Description = co.Coupon.Description,
+                        CouponConditions = co.Coupon.CouponConditions.Select(cc => new CouponConditionDTO
+                        {
+                            CouponConditionId = cc.CouponConditionId,
+                            Attribute = cc.Attribute,
+                            Operator = cc.Operator,
+                            Value = cc.Value,
+                            DiscountAmount = cc.DiscountAmount,
+                        }).ToList()
+                    }).ToList(),
+                    OrderDetails = order.OrderDetails.Select(od => new OrderDetailDTO
+                    {
+                        OrderDetailId = od.OrderId,
+                        ProductName = od.Product.ProductName,
+                        ProductSlug = od.Product.ProductSlug,
+                        ProductImage = od.Product.ProductImage,
+                        ProductPrice = od.Product.ProductSalePrice > 0 ? od.Product.ProductSalePrice : od.Product.ProductPrice,
+                        CategoryName = od.Product.Category.CategoryName,
+                        ProductStatus = od.Product.ProductStatus,
+                        Quantity = od.Quantity,
+                        TotalMoney = od.TotalMoney,
+
+                    }).ToList()
+
+                };
+                var fileName = "Order_Detail.xlsx";
+                return GenerateExcel(fileName, orderDTO, orderDTO.OrderDetails);
+            }
+            return null;
         }
 
         [Authorize(Roles = "User")]
@@ -311,7 +426,8 @@ namespace ShopApp.Controllers
                 try
                 {
                     order.OrderStatus = status;
-                    _context.SaveChanges();
+                    _context.Entry(order).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
                     return Ok(new ResponseObject(200, "Update status successfully", order));
                 }
                 catch (Exception ex)
@@ -377,5 +493,65 @@ namespace ShopApp.Controllers
 
             return body;
         }
+
+        private FileResult GenerateExcel(string fileName, OrderDTO order, IEnumerable<OrderDetailDTO> orderDetails)
+        {
+            // Create DataTable for order information
+            DataTable orderInfoTable = new DataTable("Order Information");
+            orderInfoTable.Columns.AddRange(new DataColumn[]
+            {
+        new DataColumn("Order Detail"),
+        new DataColumn("Value")
+            });
+
+            // Add order information to DataTable
+            orderInfoTable.Rows.Add("Order Detail #" + order.OrderId, "");
+            orderInfoTable.Rows.Add("Customer:", order.OrderFullName);
+            orderInfoTable.Rows.Add("Address:", order.OrderAddress);
+            orderInfoTable.Rows.Add("Phone Number:", order.OrderPhoneNumber);
+            orderInfoTable.Rows.Add("Total Order Amount:", Convert.ToDouble(order.OrderAmount).ToString("N0") + " VND");
+
+            // Create DataTable for item list
+            DataTable itemsTable = new DataTable("Order Details");
+            itemsTable.Columns.AddRange(new DataColumn[]
+            {
+        new DataColumn("Product Name"),
+        new DataColumn("Product Price"),
+        new DataColumn("Quantity"),
+        new DataColumn("Total Price")
+            });
+
+            // Add items to DataTable
+            foreach (var item in orderDetails)
+            {
+                itemsTable.Rows.Add(item.ProductName, Convert.ToDouble(item.ProductPrice).ToString("N0") + " VND", item.Quantity, Convert.ToDouble((item.ProductPrice * item.Quantity)).ToString("N0") + " VND");
+            }
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                // Add worksheet for order information
+                var orderInfoWorksheet = wb.Worksheets.Add(orderInfoTable);
+                orderInfoWorksheet.Column(1).Width = 30; // Set width for information column
+                orderInfoWorksheet.Column(2).Width = 20; // Set width for value column
+                orderInfoWorksheet.Rows(1, orderInfoTable.Rows.Count).Style.Font.Bold = true; // Set bold font for headers
+
+                // Add worksheet for item list
+                var itemsWorksheet = wb.Worksheets.Add(itemsTable);
+                itemsWorksheet.Column(1).Width = 30; // Set width for product name column
+                itemsWorksheet.Column(2).Width = 20; // Set width for product price column
+                itemsWorksheet.Column(3).Width = 10; // Set width for quantity column
+                itemsWorksheet.Column(4).Width = 20; // Set width for total price column
+                itemsWorksheet.Rows(1, itemsTable.Rows.Count).Style.Font.Bold = true; // Set bold font for headers
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    wb.SaveAs(stream);
+                    return File(stream.ToArray(),
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        fileName);
+                }
+            }
+        }
+
     }
 }

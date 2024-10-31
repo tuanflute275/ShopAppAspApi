@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Data;
@@ -10,7 +11,6 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
-    [Authorize(Roles = "Admin, User")]
     [ApiController]
     [Route("api/user")]
     public class UserController : Controller
@@ -21,6 +21,7 @@ namespace ShopApp.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet]
         public async Task<ActionResult<User>> FindAll(string? name, string? sort, int page = 1)
         {
@@ -139,6 +140,7 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", userDTO));
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpPost]
         public async Task<ActionResult<User>> Save([FromForm] UserModel model)
         {
@@ -183,8 +185,8 @@ namespace ShopApp.Controllers
                     user.UserFullName = model.UserName;
                     user.UserEmail = model.UserEmail;
                     user.UserPassword = passwordHash;
-                    user.UserPhoneNumber = model.UserName;
-                    user.UserAddress = model.UserName;
+                    user.UserPhoneNumber = model.UserPhoneNumber;
+                    user.UserAddress = model.UserAddress;
                     user.UserGender = model.UserGender;
                     user.UserActive = model.UserActive;
                     await _context.Users.AddAsync(user);
@@ -213,6 +215,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpPut("{id}")]
         public async Task<ActionResult<User>> Update(int id, [FromForm] UserModel model)
         {
@@ -252,7 +255,7 @@ namespace ShopApp.Controllers
                         user.UserAvatar = model.OldImage;
                     }
                     user.UserName = model.UserName;
-                    user.UserFullName = model.UserName;
+                    user.UserFullName = model.UserFullName;
                     user.UserEmail = model.UserEmail;
                     if (!string.IsNullOrEmpty(model.UserPassword))
                     {
@@ -262,6 +265,7 @@ namespace ShopApp.Controllers
                     user.UserAddress = model.UserAddress;
                     user.UserGender = model.UserGender;
                     user.UserActive = model.UserActive;
+                    _context.Entry(user).State = EntityState.Modified;
                     await _context.SaveChangesAsync();
 
                     return Ok(new ResponseObject(200, "Update data successfully", model));
@@ -277,6 +281,7 @@ namespace ShopApp.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> Delete(int id)
         {

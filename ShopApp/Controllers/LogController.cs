@@ -9,7 +9,7 @@ using X.PagedList;
 
 namespace ShopApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, User")]
     [ApiController]
     [Route("api/log")]
     public class LogController : Controller
