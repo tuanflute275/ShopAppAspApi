@@ -36,20 +36,13 @@ namespace ShopApp.Controllers
                 checkUser = await _context.Users.FirstOrDefaultAsync(x =>
                             x.UserEmail == model.UsernameOrEmail || x.UserName == model.UsernameOrEmail);
             }
-            else
+            if (checkUser == null) {
+                return BadRequest(new ResponseObject(400, "Email or username must be provided."));
+            }
+            if (string.IsNullOrEmpty(model.UsernameOrEmail))
             {
                 return BadRequest(new ResponseObject(400, "Email or username must be provided."));
             }
-            //select user role get roleName
-            var userRoles = await (from ur in _context.UserRoles
-                                   join r in _context.Roles on ur.RoleId equals r.Id
-                                   where ur.UserId == checkUser.Id
-                                   select new
-                                   {
-                                       UserId = checkUser.Id,
-                                       UserEmail = checkUser.UserEmail,
-                                       RoleName = r.RoleName
-                                   }).ToListAsync();
             if (model == null)
             {
                 return BadRequest(new ResponseObject(400, "Invalid request."));
@@ -68,6 +61,16 @@ namespace ShopApp.Controllers
             {
                 return BadRequest(new ResponseObject(400, "Incorrect password."));
             }
+            //select user role get roleName
+            var userRoles = await (from ur in _context.UserRoles
+                                   join r in _context.Roles on ur.RoleId equals r.Id
+                                   where ur.UserId == checkUser.Id
+                                   select new
+                                   {
+                                       UserId = checkUser.Id,
+                                       UserEmail = checkUser.UserEmail,
+                                       RoleName = r.RoleName
+                                   }).ToListAsync();
             if (userRoles == null)
             {
                 return Ok(new ResponseObject(400, "You do not have access."));
@@ -136,7 +139,7 @@ namespace ShopApp.Controllers
             {
                 return BadRequest(new ResponseObject(400, "Username already taken"));
             }
-            if(model.Password.Length <= 6)
+            if(model.Password.Length < 6)
             {
                 return BadRequest(new ResponseObject(400, "Password must be longer than 6 characters !"));
             }

@@ -92,7 +92,7 @@ namespace ShopApp.Controllers
         [HttpGet("all")]
         public async Task<ActionResult> FindListAll()
         {
-            var categories = await _context.Categories.ToListAsync();
+            var categories = await _context.Categories.Where(x => x.CategoryStatus == true).ToListAsync();
             return Ok(new ResponseObject(200, "Query data successfully", categories));
         }
 
@@ -179,9 +179,15 @@ namespace ShopApp.Controllers
         public async Task<ActionResult<Category>> Delete(int id)
         {
             var category = await _context.Categories.FindAsync(id);
+            var products = await _context.Products.Where(x => x.CategoryId == id).ToListAsync();
             if (category == null)
             {
                 return NotFound(new ResponseObject(404, $"Cannot find data with id {id}", null));
+            }
+            if (products != null && products.Count > 0)
+            {
+                _context.Products.RemoveRange(products);
+                await _context.SaveChangesAsync();
             }
             try
             {

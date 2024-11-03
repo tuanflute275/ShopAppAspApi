@@ -212,7 +212,7 @@ namespace ShopApp.Controllers
         }
 
         [HttpGet("category/{slug}")]
-        public async Task<ActionResult<Product>> FindByCategory(string slug)
+        public async Task<ActionResult<Product>> FindByCategory(string slug, int page = 1)
         {
             var products = await _context.Products.Include(p => p.Category).Where(p => p.Category.CategorySlug == slug).ToListAsync();
             var productDTOs = products.Select(p => new ProductDTO
@@ -229,6 +229,24 @@ namespace ShopApp.Controllers
                 CategoryName = p.Category.CategoryName,
                 CategorySlug = p.Category.CategorySlug
             }).ToList();
+            if (productDTOs.Count > 0)
+            {
+                int totalRecords = productDTOs.Count();
+                int limit = 10;
+                page = page <= 1 ? 1 : page;
+                var pageData = productDTOs.ToPagedList(page, limit);
+
+                int totalPages = (int)Math.Ceiling((double)totalRecords / limit);
+
+                var response = new
+                {
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages,
+                    Data = pageData
+                };
+
+                return Ok(new ResponseObject(200, "Query data successfully", response));
+            }
             return Ok(new ResponseObject(200, "Query data successfully", productDTOs));
         }
 
@@ -284,13 +302,13 @@ namespace ShopApp.Controllers
             return Ok(new ResponseObject(200, "Query data successfully", productDTOs));
         }
 
-        [HttpGet("related/{slug}")]
-        public async Task<ActionResult<Product>> FindAllDataRelated(string slug, int limit = 3)
+        [HttpGet("related/{id}")]
+        public async Task<ActionResult<Product>> FindAllDataRelated(int id, int limit = 3)
         {
             limit = limit <= 1 ? 1 : limit;
             var products = await _context.Products
                 .Include(p => p.Category)
-                .Where(p => p.ProductSlug != slug)
+                .Where(p => p.CategoryId != id)
                 .Take(limit)
                 .ToListAsync();
             var productDTOs = products.Select(p => new ProductDTO

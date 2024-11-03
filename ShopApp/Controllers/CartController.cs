@@ -91,6 +91,17 @@ namespace ShopApp.Controllers
             try
             {
                 var product = await _context.Products.FindAsync(model.ProductId);
+                var dataInCart = await _context.Carts
+                    .Where(x => x.UserId == model.UserId && x.ProductId == model.ProductId)
+                    .FirstOrDefaultAsync();
+                if(dataInCart != null)
+                {
+                    dataInCart.Quantity += model.Quantity;
+                    dataInCart.TotalAmount = model.Quantity * (product.ProductSalePrice > 0 ? product.ProductSalePrice : product.ProductPrice);
+                    await _context.SaveChangesAsync();
+                    return Ok(new ResponseObject(200, "Update data successfully", model));
+                }
+
                 Cart cart = new Cart
                 {
                     UserId = model.UserId,
@@ -112,8 +123,8 @@ namespace ShopApp.Controllers
         }
 
         [Authorize(Roles = "User")]
-        [HttpPut("{id}/{quantity}")]
-        public async Task<ActionResult<Cart>> Update(int id, int quantity)
+        [HttpPut("{id}/{type}")]
+        public async Task<ActionResult<Cart>> Update(int id, string type)
         {
             var cart = await _context.Carts.FindAsync(id);
             var product = await _context.Products.FindAsync(cart.ProductId);
@@ -121,9 +132,20 @@ namespace ShopApp.Controllers
             {
                 try
                 {
-                    cart.Quantity = quantity;
-                    cart.TotalAmount = quantity * (product.ProductSalePrice > 0 ? product.ProductSalePrice : product.ProductPrice);
-                await _context.SaveChangesAsync();
+                    if (type.Equals("minus"))
+                    {
+                        if(cart.Quantity > 0)
+                        {
+                            cart.Quantity = cart.Quantity - 1;
+                            cart.TotalAmount = cart.Quantity * (product.ProductSalePrice > 0 ? product.ProductSalePrice : product.ProductPrice);
+                        }
+                    }
+                    else if (type.Equals("plus"))
+                    {
+                        cart.Quantity = cart.Quantity + 1;
+                        cart.TotalAmount = cart.Quantity * (product.ProductSalePrice > 0 ? product.ProductSalePrice : product.ProductPrice);
+                    }
+                    await _context.SaveChangesAsync();
                     return Ok(new ResponseObject(200, "Update data successfully"));
                 }
                 catch (Exception ex)

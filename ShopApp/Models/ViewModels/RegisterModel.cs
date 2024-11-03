@@ -12,7 +12,7 @@ namespace ShopApp.Models.ViewModels
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        [MinLength(6)]
+        [MinLength(5)]
         public string Password { get; set; }
         public string? Role { get; set; }
     }

@@ -6,7 +6,7 @@ namespace ShopApp.Models.ViewModels
     {
         public string? UsernameOrEmail { get; set; }
         [Required]
-        [MinLength(6)]
+        [MinLength(5)]
         public string Password { get; set; }
     }
 }
